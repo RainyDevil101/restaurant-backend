@@ -1,0 +1,9 @@
+import { DomainError } from './domain.error'
+
+export class NotFoundError extends DomainError {
+  override readonly httpStatus = 404
+
+  constructor(entity: string, identifier: string) {
+    super(`${entity} with identifier "${identifier}" was not found`)
+  }
+}
