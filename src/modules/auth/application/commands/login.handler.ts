@@ -24,6 +24,12 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     if (!valid) throw new InvalidCredentialsError()
 
     const token = this.tokenService.sign({ sub: user.id, email: user.email, role: user.role })
-    return new AuthTokenDto(token)
+    return new AuthTokenDto(token, {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      active: user.active,
+    })
   }
 }

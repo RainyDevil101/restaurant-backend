@@ -1,5 +1,6 @@
 import { Entity } from '../../../../shared/domain/entity.base'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
+import { definedFields } from '../../../../shared/domain/patch'
 import { TableStatus, type TableStatusValue } from '../value-objects/table-status.vo'
 
 export interface TableProps {
@@ -36,7 +37,7 @@ export class Table extends Entity {
   }
 
   update(patch: Partial<Pick<TableProps, 'name' | 'capacity' | 'areaId'>>): Table {
-    return Table.create({ ...this.toProps(), ...patch }, this.id)
+    return Table.create({ ...this.toProps(), ...definedFields(patch) }, this.id)
   }
 
   private toProps(): TableProps {

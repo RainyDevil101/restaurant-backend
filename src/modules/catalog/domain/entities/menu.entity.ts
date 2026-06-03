@@ -1,5 +1,6 @@
 import { Entity } from '../../../../shared/domain/entity.base'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
+import { definedFields } from '../../../../shared/domain/patch'
 
 export interface MenuProps {
   name: string
@@ -25,7 +26,7 @@ export class Menu extends Entity {
   }
 
   update(patch: Partial<Pick<MenuProps, 'name' | 'productIds'>>): Menu {
-    return Menu.create({ ...this.toProps(), ...patch }, this.id)
+    return Menu.create({ ...this.toProps(), ...definedFields(patch) }, this.id)
   }
 
   toggleActive(): Menu {

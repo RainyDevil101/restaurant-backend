@@ -1,5 +1,6 @@
 import { Entity } from '../../../../shared/domain/entity.base'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
+import { definedFields } from '../../../../shared/domain/patch'
 
 export interface ProductProps {
   name: string
@@ -32,7 +33,7 @@ export class Product extends Entity {
   }
 
   update(patch: Partial<ProductProps>): Product {
-    return Product.create({ ...this.toProps(), ...patch }, this.id)
+    return Product.create({ ...this.toProps(), ...definedFields(patch) }, this.id)
   }
 
   toggleAvailability(): Product {
