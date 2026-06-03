@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { AuthModule } from '../auth/auth.module'
 import { CreateCategoryHandler } from './application/commands/create-category.handler'
 import { DeleteCategoryHandler } from './application/commands/delete-category.handler'
@@ -21,9 +22,12 @@ import { PRODUCT_REPOSITORY } from './domain/ports/product.repository.port'
 import { CategoriesController } from './http/categories.controller'
 import { MenusController } from './http/menus.controller'
 import { ProductsController } from './http/products.controller'
-import { InMemoryCategoryRepository } from './infrastructure/adapters/in-memory-category.repository'
-import { InMemoryMenuRepository } from './infrastructure/adapters/in-memory-menu.repository'
-import { InMemoryProductRepository } from './infrastructure/adapters/in-memory-product.repository'
+import { TypeormCategoryRepository } from './infrastructure/adapters/typeorm-category.repository'
+import { TypeormMenuRepository } from './infrastructure/adapters/typeorm-menu.repository'
+import { TypeormProductRepository } from './infrastructure/adapters/typeorm-product.repository'
+import { CategoryOrmEntity } from './infrastructure/persistence/category.orm-entity'
+import { MenuOrmEntity } from './infrastructure/persistence/menu.orm-entity'
+import { ProductOrmEntity } from './infrastructure/persistence/product.orm-entity'
 
 const HANDLERS = [
   ListCategoriesHandler, CreateCategoryHandler, UpdateCategoryHandler, DeleteCategoryHandler,
@@ -32,13 +36,17 @@ const HANDLERS = [
 ]
 
 @Module({
-  imports: [CqrsModule, AuthModule],
+  imports: [
+    CqrsModule,
+    AuthModule,
+    TypeOrmModule.forFeature([CategoryOrmEntity, ProductOrmEntity, MenuOrmEntity]),
+  ],
   controllers: [CategoriesController, ProductsController, MenusController],
   providers: [
     ...HANDLERS,
-    { provide: CATEGORY_REPOSITORY, useClass: InMemoryCategoryRepository },
-    { provide: PRODUCT_REPOSITORY, useClass: InMemoryProductRepository },
-    { provide: MENU_REPOSITORY, useClass: InMemoryMenuRepository },
+    { provide: CATEGORY_REPOSITORY, useClass: TypeormCategoryRepository },
+    { provide: PRODUCT_REPOSITORY, useClass: TypeormProductRepository },
+    { provide: MENU_REPOSITORY, useClass: TypeormMenuRepository },
   ],
   exports: [PRODUCT_REPOSITORY, CATEGORY_REPOSITORY],
 })

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
+import { TypeOrmModule } from '@nestjs/typeorm'
 import { AuthModule } from '../auth/auth.module'
 import { CreateAreaHandler } from './application/commands/create-area.handler'
 import { DeleteAreaHandler } from './application/commands/delete-area.handler'
@@ -14,8 +15,10 @@ import { AREA_REPOSITORY } from './domain/ports/area.repository.port'
 import { TABLE_REPOSITORY } from './domain/ports/table.repository.port'
 import { AreasController } from './http/areas.controller'
 import { TablesController } from './http/tables.controller'
-import { InMemoryAreaRepository } from './infrastructure/adapters/in-memory-area.repository'
-import { InMemoryTableRepository } from './infrastructure/adapters/in-memory-table.repository'
+import { TypeormAreaRepository } from './infrastructure/adapters/typeorm-area.repository'
+import { TypeormTableRepository } from './infrastructure/adapters/typeorm-table.repository'
+import { AreaOrmEntity } from './infrastructure/persistence/area.orm-entity'
+import { TableOrmEntity } from './infrastructure/persistence/table.orm-entity'
 
 const HANDLERS = [
   ListAreasHandler, CreateAreaHandler, UpdateAreaHandler, DeleteAreaHandler,
@@ -23,12 +26,12 @@ const HANDLERS = [
 ]
 
 @Module({
-  imports: [CqrsModule, AuthModule],
+  imports: [CqrsModule, AuthModule, TypeOrmModule.forFeature([AreaOrmEntity, TableOrmEntity])],
   controllers: [AreasController, TablesController],
   providers: [
     ...HANDLERS,
-    { provide: AREA_REPOSITORY, useClass: InMemoryAreaRepository },
-    { provide: TABLE_REPOSITORY, useClass: InMemoryTableRepository },
+    { provide: AREA_REPOSITORY, useClass: TypeormAreaRepository },
+    { provide: TABLE_REPOSITORY, useClass: TypeormTableRepository },
   ],
   exports: [TABLE_REPOSITORY],
 })

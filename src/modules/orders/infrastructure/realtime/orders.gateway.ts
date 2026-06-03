@@ -7,13 +7,14 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets'
 import type { Server, Socket } from 'socket.io'
+import { corsOrigins } from '../../../../config/cors.config'
 import type { Order } from '../../domain/entities/order.entity'
 import type { IOrderNotifier } from '../../domain/ports/order-notifier.port'
 import { WS_EVENT, WS_NAMESPACE, WS_ROOM } from './ws-events.constants'
 
 @Injectable()
 @WebSocketGateway({
-  cors: { origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173', credentials: true },
+  cors: { origin: corsOrigins(), credentials: true },
   namespace: WS_NAMESPACE,
 })
 export class OrdersGateway implements IOrderNotifier {

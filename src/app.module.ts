@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { envValidationSchema } from './config/env.validation';
+import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
@@ -19,6 +21,18 @@ import { AppLogger } from './shared/infrastructure/logging/app-logger.service';
       validationSchema: envValidationSchema,
       validationOptions: { abortEarly: false },
     }),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        throttlers: [
+          {
+            ttl: config.get<number>('THROTTLE_TTL', 60000),
+            limit: config.get<number>('THROTTLE_LIMIT', 100),
+          },
+        ],
+      }),
+    }),
+    DatabaseModule,
     UsersModule,
     AuthModule,
     VenueModule,
@@ -28,6 +42,7 @@ import { AppLogger } from './shared/infrastructure/logging/app-logger.service';
   ],
   providers: [
     AppLogger,
+    { provide: APP_GUARD,       useClass: ThrottlerGuard },
     { provide: APP_FILTER,      useClass: DomainExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: HttpLoggingInterceptor },
   ],
