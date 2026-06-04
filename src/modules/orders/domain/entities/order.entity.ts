@@ -29,6 +29,7 @@ export interface OrderSeedProps {
   createdBy: string
   createdAt: Date
   status: OrderStatusValue
+  paid: boolean
   items: OrderItemProps[]
 }
 
@@ -37,6 +38,7 @@ export class Order extends Entity {
   readonly createdBy: string
   readonly createdAt: Date
   readonly status: OrderStatus
+  readonly paid: boolean
   readonly items: readonly OrderItemProps[]
 
   private constructor(props: OrderSeedProps, id: string) {
@@ -45,6 +47,7 @@ export class Order extends Entity {
     this.createdBy = props.createdBy
     this.createdAt = props.createdAt
     this.status = OrderStatus.of(props.status)
+    this.paid = props.paid
     this.items = Object.freeze(props.items.map((item) => ({ ...item, kind: item.kind ?? 'product' })))
   }
 
@@ -65,6 +68,7 @@ export class Order extends Entity {
         createdBy: props.createdBy,
         createdAt: props.createdAt ?? new Date(),
         status: props.status ?? ORDER_STATUS.PENDING,
+        paid: false,
         items,
       },
       id,
@@ -87,6 +91,7 @@ export class Order extends Entity {
       createdBy: this.createdBy,
       createdAt: this.createdAt,
       status: this.status.value,
+      paid: this.paid,
       items: [...this.items],
       total: this.total,
     }
@@ -100,12 +105,17 @@ export class Order extends Entity {
     )
   }
 
+  markPaid(): Order {
+    return Order.rehydrate({ ...this.toSeedProps(), paid: true }, this.id)
+  }
+
   private toSeedProps(): OrderSeedProps {
     return {
       tableId: this.tableId,
       createdBy: this.createdBy,
       createdAt: this.createdAt,
       status: this.status.value,
+      paid: this.paid,
       items: [...this.items],
     }
   }

@@ -19,6 +19,7 @@ export class TypeormOrderRepository implements IOrderRepository {
         createdBy: row.createdBy,
         createdAt: row.createdAt,
         status: row.status,
+        paid: row.paid,
         items: row.items,
       },
       row.id,
@@ -32,6 +33,7 @@ export class TypeormOrderRepository implements IOrderRepository {
     row.createdBy = order.createdBy
     row.createdAt = order.createdAt
     row.status = order.status.value
+    row.paid = order.paid
     row.items = [...order.items]
     return row
   }
@@ -40,6 +42,7 @@ export class TypeormOrderRepository implements IOrderRepository {
     const where: FindOptionsWhere<OrderOrmEntity> = {}
     if (filters?.tableId) where.tableId = filters.tableId
     if (filters?.status) where.status = filters.status
+    if (filters?.paid !== undefined) where.paid = filters.paid
     const rows = await this.repo.find({ where, order: { createdAt: 'ASC' } })
     return rows.map((row) => this.toDomain(row))
   }

@@ -184,7 +184,7 @@ async function seed() {
   for (const o of ORDERS) {
     await orderRepo.save(
       Order.rehydrate(
-        { tableId: o.tableId, createdBy: o.createdBy, createdAt: o.createdAt, status: o.status, items: o.items },
+        { tableId: o.tableId, createdBy: o.createdBy, createdAt: o.createdAt, status: o.status, paid: false, items: o.items },
         o.id,
       ),
     )

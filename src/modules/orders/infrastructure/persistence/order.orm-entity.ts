@@ -19,6 +19,9 @@ export class OrderOrmEntity {
   @Column({ type: 'varchar' })
   status!: OrderStatusValue
 
+  @Column({ type: 'boolean', default: false })
+  paid!: boolean
+
   @Column({ type: 'jsonb' })
   items!: OrderItemProps[]
 }

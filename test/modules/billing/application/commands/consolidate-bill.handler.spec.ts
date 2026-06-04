@@ -68,7 +68,33 @@ describe('ConsolidateBillHandler', () => {
     expect(orderRepo.findAll).toHaveBeenCalledWith({
       tableId: 'table-1',
       status: ORDER_STATUS.DELIVERED,
+      paid: false,
     })
+    expect(result.total).toBe(100)
+  })
+
+  it('consolidates only unpaid delivered orders, excluding already-paid ones', async () => {
+    billRepo.findByTable.mockResolvedValue(null)
+    const unpaid = buildOrder([{ productId: 'p1', productName: 'Tacos', quantity: 2, unitPrice: 50 }], 'order-1')
+    const paidOrder = buildOrder([{ productId: 'p2', productName: 'Agua', quantity: 1, unitPrice: 20 }], 'order-2').markPaid()
+    orderRepo.findAll.mockImplementation(async (filters) =>
+      [unpaid, paidOrder].filter(
+        (o) =>
+          (filters?.status === undefined || o.status.value === filters.status) &&
+          (filters?.paid === undefined || o.paid === filters.paid),
+      ),
+    )
+    billRepo.save.mockImplementation(async (bill) => bill)
+
+    const result = await handler.execute(new ConsolidateBillCommand('table-1'))
+
+    expect(orderRepo.findAll).toHaveBeenCalledWith({
+      tableId: 'table-1',
+      status: ORDER_STATUS.DELIVERED,
+      paid: false,
+    })
+    expect(result.items).toHaveLength(1)
+    expect(result.items[0]?.productId).toBe('p1')
     expect(result.total).toBe(100)
   })
 

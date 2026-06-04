@@ -21,7 +21,7 @@ export class ConsolidateBillHandler implements ICommandHandler<ConsolidateBillCo
     const existing = await this.billRepo.findByTable(tableId)
     if (existing && !existing.paid) return existing
 
-    const deliveredOrders = await this.orderRepo.findAll({ tableId, status: ORDER_STATUS.DELIVERED })
+    const deliveredOrders = await this.orderRepo.findAll({ tableId, status: ORDER_STATUS.DELIVERED, paid: false })
     if (deliveredOrders.length === 0) {
       throw new ValidationError('orders', BILL_ERROR.NO_DELIVERED_ORDERS)
     }

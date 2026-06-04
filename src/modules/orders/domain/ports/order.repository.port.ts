@@ -6,6 +6,7 @@ export const ORDER_REPOSITORY = Symbol('ORDER_REPOSITORY')
 export interface OrderFilters {
   tableId?: string
   status?: OrderStatusValue
+  paid?: boolean
 }
 
 export interface IOrderRepository {

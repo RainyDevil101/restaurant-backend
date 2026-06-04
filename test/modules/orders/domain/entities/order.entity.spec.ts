@@ -25,6 +25,15 @@ describe('Order', () => {
       expect(order.items[0]?.subtotal).toBe(100)
     })
 
+    it('defaults paid to false', () => {
+      const order = Order.create(
+        { tableId: 'table-1', createdBy: 'user-1', items: [itemInput] },
+        'order-1',
+      )
+
+      expect(order.paid).toBe(false)
+    })
+
     it('defaults the status to pending', () => {
       const order = Order.create(
         { tableId: 'table-1', createdBy: 'user-1', items: [itemInput] },
@@ -83,6 +92,7 @@ describe('Order', () => {
       createdBy: 'user-1',
       createdAt: new Date('2024-01-01T00:00:00.000Z'),
       status: ORDER_STATUS.READY,
+      paid: true,
       items: [{ ...itemInput, itemId: 'item-1', subtotal: 100 }],
     }
 
@@ -91,6 +101,7 @@ describe('Order', () => {
 
       expect(order.id).toBe('order-1')
       expect(order.status.value).toBe(ORDER_STATUS.READY)
+      expect(order.paid).toBe(true)
       expect(order.items[0]?.itemId).toBe('item-1')
       expect(order.items[0]?.subtotal).toBe(100)
     })
@@ -152,6 +163,41 @@ describe('Order', () => {
       )
 
       expect(() => order.updateStatus(ORDER_STATUS.IN_PROGRESS)).toThrow(ValidationError)
+    })
+
+    it('preserves the paid flag across a status change', () => {
+      const order = Order.rehydrate(
+        {
+          tableId: 'table-1',
+          createdBy: 'user-1',
+          createdAt: new Date('2024-01-01T00:00:00.000Z'),
+          status: ORDER_STATUS.READY,
+          paid: true,
+          items: [{ ...itemInput, itemId: 'item-1', subtotal: 100 }],
+        },
+        'order-1',
+      )
+
+      const updated = order.updateStatus(ORDER_STATUS.DELIVERED)
+
+      expect(updated.paid).toBe(true)
+    })
+  })
+
+  describe('markPaid', () => {
+    it('returns a paid copy preserving every other field', () => {
+      const order = Order.create(
+        { tableId: 'table-1', createdBy: 'user-1', status: ORDER_STATUS.DELIVERED, items: [itemInput] },
+        'order-1',
+      )
+
+      const paid = order.markPaid()
+
+      expect(paid.paid).toBe(true)
+      expect(order.paid).toBe(false)
+      expect(paid.id).toBe('order-1')
+      expect(paid.status.value).toBe(ORDER_STATUS.DELIVERED)
+      expect(paid.items).toHaveLength(1)
     })
   })
 })

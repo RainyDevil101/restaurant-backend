@@ -7,11 +7,25 @@ import type { IPaymentRepository } from '@src/modules/billing/domain/ports/payme
 import { Table } from '@src/modules/venue/domain/entities/table.entity'
 import { TABLE_STATUS } from '@src/modules/venue/domain/constants/table-status.constants'
 import type { ITableRepository } from '@src/modules/venue/domain/ports/table.repository.port'
+import { Order } from '@src/modules/orders/domain/entities/order.entity'
+import { ORDER_STATUS } from '@src/modules/orders/domain/constants/order-status.constants'
+import type { IOrderRepository } from '@src/modules/orders/domain/ports/order.repository.port'
 import { NotFoundError } from '@src/shared/domain/errors/not-found.error'
 import { ValidationError } from '@src/shared/domain/errors/validation.error'
 
 const buildBill = (total: number): Bill =>
   Bill.create({ tableId: 'table-1', items: [], total, createdAt: new Date() }, 'bill-1')
+
+const buildDeliveredOrder = (id: string): Order =>
+  Order.create(
+    {
+      tableId: 'table-1',
+      createdBy: 'user-1',
+      status: ORDER_STATUS.DELIVERED,
+      items: [{ productId: 'p1', productName: 'Tacos', quantity: 1, unitPrice: 50 }],
+    },
+    id,
+  )
 
 const buildTable = (status: string): Table =>
   Table.create({ name: 'Mesa 1', capacity: 4, status: status as never, areaId: 'area-1' }, 'table-1')
@@ -20,6 +34,7 @@ describe('ProcessPaymentHandler', () => {
   let billRepo: jest.Mocked<IBillRepository>
   let paymentRepo: jest.Mocked<IPaymentRepository>
   let tableRepo: jest.Mocked<ITableRepository>
+  let orderRepo: jest.Mocked<IOrderRepository>
   let handler: ProcessPaymentHandler
 
   beforeEach(() => {
@@ -40,7 +55,13 @@ describe('ProcessPaymentHandler', () => {
       update: jest.fn(),
       delete: jest.fn(),
     }
-    handler = new ProcessPaymentHandler(billRepo, paymentRepo, tableRepo)
+    orderRepo = {
+      findAll: jest.fn().mockResolvedValue([]),
+      findById: jest.fn(),
+      save: jest.fn(),
+      update: jest.fn(),
+    }
+    handler = new ProcessPaymentHandler(billRepo, paymentRepo, tableRepo, orderRepo)
   })
 
   it('persists a cash payment with the correct change', async () => {
@@ -80,6 +101,26 @@ describe('ProcessPaymentHandler', () => {
 
     expect(bill.paid).toBe(true)
     expect(billRepo.update).toHaveBeenCalledWith(bill)
+  })
+
+  it('marks the table delivered-unpaid orders as paid', async () => {
+    billRepo.findByTable.mockResolvedValue(buildBill(100))
+    tableRepo.findById.mockResolvedValue(buildTable(TABLE_STATUS.PENDING_PAYMENT))
+    orderRepo.findAll.mockResolvedValue([buildDeliveredOrder('order-1'), buildDeliveredOrder('order-2')])
+
+    await handler.execute(
+      new ProcessPaymentCommand('table-1', { method: PAYMENT_METHOD.CASH, amount: 100 }),
+    )
+
+    expect(orderRepo.findAll).toHaveBeenCalledWith({
+      tableId: 'table-1',
+      status: ORDER_STATUS.DELIVERED,
+      paid: false,
+    })
+    expect(orderRepo.update).toHaveBeenCalledTimes(2)
+    for (const call of orderRepo.update.mock.calls) {
+      expect(call[0]?.paid).toBe(true)
+    }
   })
 
   it('frees a table that was pending payment', async () => {

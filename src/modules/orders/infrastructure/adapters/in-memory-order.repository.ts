@@ -66,7 +66,7 @@ export class InMemoryOrderRepository implements IOrderRepository {
 
   constructor() {
     this.store = new Map(
-      SEED_ORDERS.map((o) => [o.id, Order.rehydrate(o, o.id)]),
+      SEED_ORDERS.map((o) => [o.id, Order.rehydrate({ ...o, paid: false }, o.id)]),
     )
   }
 
@@ -74,6 +74,7 @@ export class InMemoryOrderRepository implements IOrderRepository {
     let orders = [...this.store.values()]
     if (filters?.tableId) orders = orders.filter((o) => o.tableId === filters.tableId)
     if (filters?.status)  orders = orders.filter((o) => o.status.value === filters.status)
+    if (filters?.paid !== undefined) orders = orders.filter((o) => o.paid === filters.paid)
     return orders.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
   }
 

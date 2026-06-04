@@ -5,6 +5,8 @@ import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
 import { TABLE_STATUS } from '../../../venue/domain/constants/table-status.constants'
 import { TABLE_REPOSITORY, type ITableRepository } from '../../../venue/domain/ports/table.repository.port'
+import { ORDER_REPOSITORY, type IOrderRepository } from '../../../orders/domain/ports/order.repository.port'
+import { ORDER_STATUS } from '../../../orders/domain/constants/order-status.constants'
 import { BILL_ENTITY_NAME, BILL_ERROR } from '../constants/billing-error-messages.constants'
 import { PAYMENT_METHOD } from '../../domain/constants/payment-method.constants'
 import { Payment } from '../../domain/entities/payment.entity'
@@ -19,6 +21,7 @@ export class ProcessPaymentHandler implements ICommandHandler<ProcessPaymentComm
     @Inject(BILL_REPOSITORY)    private readonly billRepo: IBillRepository,
     @Inject(PAYMENT_REPOSITORY) private readonly paymentRepo: IPaymentRepository,
     @Inject(TABLE_REPOSITORY)   private readonly tableRepo: ITableRepository,
+    @Inject(ORDER_REPOSITORY)   private readonly orderRepo: IOrderRepository,
   ) {}
 
   async execute({ tableId, dto }: ProcessPaymentCommand): Promise<Payment> {
@@ -42,6 +45,11 @@ export class ProcessPaymentHandler implements ICommandHandler<ProcessPaymentComm
     const table = await this.tableRepo.findById(tableId)
     if (table?.status.value === TABLE_STATUS.PENDING_PAYMENT) {
       await this.tableRepo.update(table.updateStatus(TABLE_STATUS.FREE))
+    }
+
+    const unpaidOrders = await this.orderRepo.findAll({ tableId, status: ORDER_STATUS.DELIVERED, paid: false })
+    for (const order of unpaidOrders) {
+      await this.orderRepo.update(order.markPaid())
     }
 
     return payment
