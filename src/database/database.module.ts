@@ -1,11 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-
-function requiresSsl(databaseUrl: string): boolean {
-  const host = new URL(databaseUrl).hostname
-  return host !== 'localhost' && host !== '127.0.0.1'
-}
+import { sslOptionFor } from './ssl'
 
 @Module({
   imports: [
@@ -17,7 +13,7 @@ function requiresSsl(databaseUrl: string): boolean {
         return {
           type: 'postgres',
           url,
-          ssl: requiresSsl(url) ? { rejectUnauthorized: false } : false,
+          ssl: sslOptionFor(url),
           autoLoadEntities: true,
           synchronize: true,
         }

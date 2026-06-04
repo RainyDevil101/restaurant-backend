@@ -1,5 +1,6 @@
 import { gzipSync } from 'zlib'
 import { Client } from 'pg'
+import { sslOptionFor } from '../ssl'
 import { BACKUP_PREFIX } from './backup-driver.constants'
 
 export interface DumpResult {
@@ -23,7 +24,7 @@ function literal(value: unknown): string {
 }
 
 export async function createDump(databaseUrl: string): Promise<DumpResult> {
-  const client = new Client({ connectionString: databaseUrl, ssl: { rejectUnauthorized: false } })
+  const client = new Client({ connectionString: databaseUrl, ssl: sslOptionFor(databaseUrl) })
   await client.connect()
   try {
     const { rows: tableRows } = await client.query<{ tablename: string }>(

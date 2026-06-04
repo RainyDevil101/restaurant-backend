@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: subito-db
     restart: unless-stopped
     environment:
@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: subito
       POSTGRES_DB: subito
     ports:
-      - '5432:5432'
+      - '127.0.0.1:5432:5432'
     volumes:
       - subito-db-data:/var/lib/postgresql/data
     healthcheck:
@@ -16,6 +16,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 5s
 
 volumes:
   subito-db-data:
