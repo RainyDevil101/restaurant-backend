@@ -31,6 +31,9 @@ export interface OrderSeedProps {
   status: OrderStatusValue
   paid: boolean
   items: OrderItemProps[]
+  cancelledBy?: string
+  cancellationReason?: string
+  cancelledAt?: Date
 }
 
 export class Order extends Entity {
@@ -40,6 +43,9 @@ export class Order extends Entity {
   readonly status: OrderStatus
   readonly paid: boolean
   readonly items: readonly OrderItemProps[]
+  readonly cancelledBy?: string
+  readonly cancellationReason?: string
+  readonly cancelledAt?: Date
 
   private constructor(props: OrderSeedProps, id: string) {
     super(id)
@@ -49,6 +55,9 @@ export class Order extends Entity {
     this.status = OrderStatus.of(props.status)
     this.paid = props.paid
     this.items = Object.freeze(props.items.map((item) => ({ ...item, kind: item.kind ?? 'product' })))
+    this.cancelledBy = props.cancelledBy
+    this.cancellationReason = props.cancellationReason
+    this.cancelledAt = props.cancelledAt
   }
 
   /** Creates a new order, generating item IDs and computing subtotals. */
@@ -94,6 +103,9 @@ export class Order extends Entity {
       paid: this.paid,
       items: [...this.items],
       total: this.total,
+      cancelledBy: this.cancelledBy,
+      cancellationReason: this.cancellationReason,
+      cancelledAt: this.cancelledAt,
     }
   }
 
@@ -109,6 +121,20 @@ export class Order extends Entity {
     return Order.rehydrate({ ...this.toSeedProps(), paid: true }, this.id)
   }
 
+  cancel(params: { reason: string; cancelledBy: string }): Order {
+    const next = this.status.transitionTo(OrderStatus.CANCELLED)
+    return Order.rehydrate(
+      {
+        ...this.toSeedProps(),
+        status: next.value,
+        cancelledBy: params.cancelledBy,
+        cancellationReason: params.reason,
+        cancelledAt: new Date(),
+      },
+      this.id,
+    )
+  }
+
   private toSeedProps(): OrderSeedProps {
     return {
       tableId: this.tableId,
@@ -117,6 +143,9 @@ export class Order extends Entity {
       status: this.status.value,
       paid: this.paid,
       items: [...this.items],
+      cancelledBy: this.cancelledBy,
+      cancellationReason: this.cancellationReason,
+      cancelledAt: this.cancelledAt,
     }
   }
 }

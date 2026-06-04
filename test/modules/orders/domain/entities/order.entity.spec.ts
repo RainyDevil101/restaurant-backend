@@ -184,6 +184,50 @@ describe('Order', () => {
     })
   })
 
+  describe('cancel', () => {
+    it('cancels a pending order and records the audit fields', () => {
+      const order = Order.create(
+        { tableId: 'table-1', createdBy: 'user-1', items: [itemInput] },
+        'order-1',
+      )
+
+      const cancelled = order.cancel({ reason: 'Cliente se retiró', cancelledBy: 'admin-1' })
+
+      expect(cancelled.status.value).toBe(ORDER_STATUS.CANCELLED)
+      expect(cancelled.cancelledBy).toBe('admin-1')
+      expect(cancelled.cancellationReason).toBe('Cliente se retiró')
+      expect(cancelled.cancelledAt).toBeInstanceOf(Date)
+      expect(order.status.value).toBe(ORDER_STATUS.PENDING)
+    })
+
+    it('cancels a delivered order', () => {
+      const order = Order.create(
+        { tableId: 'table-1', createdBy: 'user-1', status: ORDER_STATUS.DELIVERED, items: [itemInput] },
+        'order-1',
+      )
+
+      const cancelled = order.cancel({ reason: 'Error', cancelledBy: 'admin-1' })
+
+      expect(cancelled.status.value).toBe(ORDER_STATUS.CANCELLED)
+    })
+
+    it('exposes the audit fields through toJSON', () => {
+      const order = Order.create(
+        { tableId: 'table-1', createdBy: 'user-1', items: [itemInput] },
+        'order-1',
+      )
+
+      const json = order.cancel({ reason: 'Motivo', cancelledBy: 'admin-1' }).toJSON()
+
+      expect(json).toMatchObject({
+        status: ORDER_STATUS.CANCELLED,
+        cancelledBy: 'admin-1',
+        cancellationReason: 'Motivo',
+      })
+      expect(json.cancelledAt).toBeInstanceOf(Date)
+    })
+  })
+
   describe('markPaid', () => {
     it('returns a paid copy preserving every other field', () => {
       const order = Order.create(

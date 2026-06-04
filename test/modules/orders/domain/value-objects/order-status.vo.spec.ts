@@ -35,6 +35,16 @@ describe('OrderStatus', () => {
       expect(OrderStatus.of(ORDER_STATUS.PENDING).transitionTo(next)).toBe(next)
     })
 
+    it('allows cancelling a delivered order', () => {
+      const next = OrderStatus.of(ORDER_STATUS.CANCELLED)
+      expect(OrderStatus.of(ORDER_STATUS.DELIVERED).transitionTo(next)).toBe(next)
+    })
+
+    it('rejects any transition out of a cancelled order', () => {
+      const next = OrderStatus.of(ORDER_STATUS.DELIVERED)
+      expect(() => OrderStatus.of(ORDER_STATUS.CANCELLED).transitionTo(next)).toThrow(ValidationError)
+    })
+
     it('rejects moving a pending order into the in-progress state', () => {
       const next = OrderStatus.of(ORDER_STATUS.IN_PROGRESS)
       expect(() => OrderStatus.of(ORDER_STATUS.PENDING).transitionTo(next)).toThrow(ValidationError)

@@ -24,4 +24,13 @@ export class OrderOrmEntity {
 
   @Column({ type: 'jsonb' })
   items!: OrderItemProps[]
+
+  @Column({ type: 'varchar', nullable: true })
+  cancelledBy!: string | null
+
+  @Column({ type: 'varchar', nullable: true })
+  cancellationReason!: string | null
+
+  @Column({ type: 'timestamptz', nullable: true })
+  cancelledAt!: Date | null
 }

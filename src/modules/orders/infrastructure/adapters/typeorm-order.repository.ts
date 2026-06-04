@@ -21,6 +21,9 @@ export class TypeormOrderRepository implements IOrderRepository {
         status: row.status,
         paid: row.paid,
         items: row.items,
+        cancelledBy: row.cancelledBy ?? undefined,
+        cancellationReason: row.cancellationReason ?? undefined,
+        cancelledAt: row.cancelledAt ?? undefined,
       },
       row.id,
     )
@@ -35,6 +38,9 @@ export class TypeormOrderRepository implements IOrderRepository {
     row.status = order.status.value
     row.paid = order.paid
     row.items = [...order.items]
+    row.cancelledBy = order.cancelledBy ?? null
+    row.cancellationReason = order.cancellationReason ?? null
+    row.cancelledAt = order.cancelledAt ?? null
     return row
   }
 

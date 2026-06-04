@@ -36,3 +36,17 @@ export class UpdateOrderStatusDto {
   @IsIn(Object.values(ORDER_STATUS))
   status: OrderStatusValue
 }
+
+export class CancelOrderDto {
+  @IsString()
+  @IsNotEmpty()
+  reason: string
+
+  @IsString()
+  @IsNotEmpty()
+  adminEmail: string
+
+  @IsString()
+  @IsNotEmpty()
+  adminCredential: string
+}
