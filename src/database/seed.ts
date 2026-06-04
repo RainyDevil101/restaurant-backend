@@ -2,6 +2,9 @@ import { Logger } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import * as bcrypt from 'bcryptjs'
 import { AppModule } from '../app.module'
+
+/** Lower rounds than production (BcryptPasswordAdapter uses 12) — intentional for seed speed */
+const SEED_BCRYPT_ROUNDS = 10
 import { ROLE } from '../shared/constants/roles.constants'
 import { USER_REPOSITORY, type IUserRepository } from '../modules/users/domain/ports/user.repository.port'
 import { User } from '../modules/users/domain/entities/user.entity'
@@ -172,7 +175,7 @@ async function seed() {
   for (const u of USERS) {
     await userRepo.save(
       User.create(
-        { name: u.name, email: u.email, hashedCredential: bcrypt.hashSync(u.credential, 10), role: u.role, active: u.active },
+        { name: u.name, email: u.email, hashedCredential: bcrypt.hashSync(u.credential, SEED_BCRYPT_ROUNDS), role: u.role, active: u.active },
         u.id,
       ),
     )

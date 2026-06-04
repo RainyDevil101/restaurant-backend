@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { Cron } from '@nestjs/schedule'
 import { ENV_DEFAULTS } from '../../shared/constants/env-defaults.constants'
 import { BACKUP_STORAGE, type BackupStorage } from './backup-storage.port'
+import { BACKUP_JOB } from './backup-job.constants'
 import { createDump } from './sql-dump'
 
 @Injectable()
@@ -15,7 +16,7 @@ export class BackupService {
   ) {}
 
   @Cron(process.env.BACKUP_CRON ?? ENV_DEFAULTS.BACKUP_CRON, {
-    name: 'daily-db-backup',
+    name: BACKUP_JOB.DAILY_DB_BACKUP,
     timeZone: process.env.BACKUP_TIMEZONE ?? ENV_DEFAULTS.BACKUP_TIMEZONE,
   })
   async handleDailyBackup(): Promise<void> {

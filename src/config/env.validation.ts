@@ -54,31 +54,31 @@ export const envValidationSchema = Joi.object({
   BACKUP_DRIVER: Joi.string().valid(BACKUP_DRIVER.LOCAL, BACKUP_DRIVER.S3).default(ENV_DEFAULTS.BACKUP_DRIVER),
 
   S3_ENDPOINT: Joi.string().when('BACKUP_DRIVER', {
-    is: 's3',
+    is: BACKUP_DRIVER.S3,
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
 
   S3_REGION: Joi.string().when('BACKUP_DRIVER', {
-    is: 's3',
+    is: BACKUP_DRIVER.S3,
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
 
   S3_BUCKET: Joi.string().when('BACKUP_DRIVER', {
-    is: 's3',
+    is: BACKUP_DRIVER.S3,
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
 
   S3_ACCESS_KEY_ID: Joi.string().when('BACKUP_DRIVER', {
-    is: 's3',
+    is: BACKUP_DRIVER.S3,
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
 
   S3_SECRET_ACCESS_KEY: Joi.string().when('BACKUP_DRIVER', {
-    is: 's3',
+    is: BACKUP_DRIVER.S3,
     then: Joi.required(),
     otherwise: Joi.optional(),
   }),
