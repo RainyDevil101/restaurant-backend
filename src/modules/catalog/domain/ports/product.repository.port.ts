@@ -14,4 +14,5 @@ export interface IProductRepository {
   save(product: Product): Promise<Product>
   update(product: Product): Promise<Product>
   delete(id: string): Promise<void>
+  stamp(): Promise<{ count: number; lastModified: string | null }>
 }

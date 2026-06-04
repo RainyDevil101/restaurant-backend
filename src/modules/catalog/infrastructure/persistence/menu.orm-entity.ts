@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('menus')
 export class MenuOrmEntity {
@@ -13,4 +13,10 @@ export class MenuOrmEntity {
 
   @Column({ type: 'boolean' })
   active!: boolean
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt!: Date
 }

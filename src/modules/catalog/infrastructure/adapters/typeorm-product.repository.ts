@@ -68,4 +68,16 @@ export class TypeormProductRepository implements IProductRepository {
   async delete(id: string): Promise<void> {
     await this.repo.delete({ id })
   }
+
+  async stamp(): Promise<{ count: number; lastModified: string | null }> {
+    const row = await this.repo
+      .createQueryBuilder('e')
+      .select('COUNT(*)', 'count')
+      .addSelect('MAX(e.updated_at)', 'lastModified')
+      .getRawOne<{ count: string; lastModified: Date | null }>()
+    return {
+      count: Number(row?.count ?? 0),
+      lastModified: row?.lastModified ? row.lastModified.toISOString() : null,
+    }
+  }
 }

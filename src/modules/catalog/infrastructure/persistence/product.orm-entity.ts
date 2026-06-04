@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm'
 import { numericTransformer } from '../../../../database/numeric.transformer'
 
 @Entity('products')
@@ -20,4 +20,10 @@ export class ProductOrmEntity {
 
   @Column({ type: 'boolean' })
   available!: boolean
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt!: Date
 }

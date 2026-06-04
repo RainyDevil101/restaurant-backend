@@ -8,4 +8,5 @@ export interface IMenuRepository {
   save(menu: Menu): Promise<Menu>
   update(menu: Menu): Promise<Menu>
   delete(id: string): Promise<void>
+  stamp(): Promise<{ count: number; lastModified: string | null }>
 }

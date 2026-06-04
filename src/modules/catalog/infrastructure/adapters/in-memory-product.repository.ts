@@ -54,4 +54,8 @@ export class InMemoryProductRepository implements IProductRepository {
   async delete(id: string): Promise<void> {
     this.store.delete(id)
   }
+
+  async stamp(): Promise<{ count: number; lastModified: string | null }> {
+    return { count: this.store.size, lastModified: null }
+  }
 }

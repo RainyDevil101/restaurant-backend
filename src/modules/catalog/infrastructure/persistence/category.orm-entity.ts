@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('categories')
 export class CategoryOrmEntity {
@@ -7,4 +7,10 @@ export class CategoryOrmEntity {
 
   @Column({ type: 'varchar' })
   name!: string
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt!: Date
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt!: Date
 }

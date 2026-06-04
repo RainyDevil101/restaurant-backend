@@ -8,4 +8,5 @@ export interface ICategoryRepository {
   save(category: Category): Promise<Category>
   update(category: Category): Promise<Category>
   delete(id: string): Promise<void>
+  stamp(): Promise<{ count: number; lastModified: string | null }>
 }
