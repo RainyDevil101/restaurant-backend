@@ -13,13 +13,13 @@ export class PaymentOrmEntity {
   @Column({ type: 'varchar' })
   tableId!: string
 
-  @Column({ type: 'numeric', precision: 10, scale: 2, transformer: numericTransformer })
+  @Column({ type: 'numeric', precision: 12, scale: 2, transformer: numericTransformer })
   amount!: number
 
   @Column({ type: 'varchar' })
   method!: PaymentMethodValue
 
-  @Column({ type: 'numeric', precision: 10, scale: 2, transformer: numericTransformer })
+  @Column({ type: 'numeric', precision: 12, scale: 2, transformer: numericTransformer })
   change!: number
 
   @Column({ type: 'timestamptz' })
