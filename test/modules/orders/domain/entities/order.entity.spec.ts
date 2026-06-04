@@ -138,9 +138,9 @@ describe('Order', () => {
         'order-1',
       )
 
-      const updated = order.updateStatus(ORDER_STATUS.IN_PROGRESS)
+      const updated = order.updateStatus(ORDER_STATUS.DELIVERED)
 
-      expect(updated.status.value).toBe(ORDER_STATUS.IN_PROGRESS)
+      expect(updated.status.value).toBe(ORDER_STATUS.DELIVERED)
       expect(updated.id).toBe('order-1')
       expect(order.status.value).toBe(ORDER_STATUS.PENDING)
     })
@@ -151,7 +151,7 @@ describe('Order', () => {
         'order-1',
       )
 
-      expect(() => order.updateStatus(ORDER_STATUS.DELIVERED)).toThrow(ValidationError)
+      expect(() => order.updateStatus(ORDER_STATUS.IN_PROGRESS)).toThrow(ValidationError)
     })
   })
 })

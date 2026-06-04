@@ -32,19 +32,19 @@ describe('UpdateOrderStatusHandler', () => {
     const { handler, orderRepo } = buildDeps()
 
     const result = await handler.execute(
-      new UpdateOrderStatusCommand('order-1', ORDER_STATUS.IN_PROGRESS),
+      new UpdateOrderStatusCommand('order-1', ORDER_STATUS.DELIVERED),
     )
 
     expect(orderRepo.findById).toHaveBeenCalledWith('order-1')
     expect(orderRepo.update).toHaveBeenCalledTimes(1)
-    expect(result.status.value).toBe(ORDER_STATUS.IN_PROGRESS)
+    expect(result.status.value).toBe(ORDER_STATUS.DELIVERED)
   })
 
   it('notifies of the status change with the saved order', async () => {
     const { handler, notifier } = buildDeps()
 
     const result = await handler.execute(
-      new UpdateOrderStatusCommand('order-1', ORDER_STATUS.IN_PROGRESS),
+      new UpdateOrderStatusCommand('order-1', ORDER_STATUS.DELIVERED),
     )
 
     expect(notifier.notifyStatusChanged).toHaveBeenCalledWith(result)
@@ -64,7 +64,7 @@ describe('UpdateOrderStatusHandler', () => {
     const { handler, orderRepo, notifier } = buildDeps()
 
     await expect(
-      handler.execute(new UpdateOrderStatusCommand('order-1', ORDER_STATUS.DELIVERED)),
+      handler.execute(new UpdateOrderStatusCommand('order-1', ORDER_STATUS.IN_PROGRESS)),
     ).rejects.toThrow(ValidationError)
     expect(orderRepo.update).not.toHaveBeenCalled()
     expect(notifier.notifyStatusChanged).not.toHaveBeenCalled()
