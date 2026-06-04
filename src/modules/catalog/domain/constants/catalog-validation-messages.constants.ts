@@ -4,6 +4,7 @@ export const CATEGORY_VALIDATION = {
 
 export const MENU_VALIDATION = {
   NAME_EMPTY: 'Menu name cannot be empty',
+  PRICE_NEGATIVE: 'Price cannot be negative',
 } as const
 
 export const PRODUCT_VALIDATION = {

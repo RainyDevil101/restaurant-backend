@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm'
+import { numericTransformer } from '../../../../database/numeric.transformer'
 
 @Entity('menus')
 export class MenuOrmEntity {
@@ -13,6 +14,9 @@ export class MenuOrmEntity {
 
   @Column({ type: 'boolean' })
   active!: boolean
+
+  @Column({ type: 'numeric', precision: 10, scale: 2, transformer: numericTransformer, default: 0 })
+  price!: number
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date

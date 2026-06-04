@@ -1,6 +1,7 @@
 import { Entity } from '../../../../shared/domain/entity.base'
 
 export interface BillItemProps {
+  kind?: 'product' | 'combo'
   productId: string
   productName: string
   quantity: number

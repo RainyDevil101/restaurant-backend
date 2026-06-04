@@ -6,11 +6,12 @@ import { ORDER_STATUS } from '../constants/order-status.constants'
 
 export interface OrderItemProps {
   itemId: string
+  kind?: 'product' | 'combo'
   productId: string
-  productName: string   // snapshot at order time
+  productName: string
   quantity: number
-  unitPrice: number     // snapshot at order time
-  subtotal: number      // quantity × unitPrice
+  unitPrice: number
+  subtotal: number
   notes?: string
 }
 
@@ -43,7 +44,7 @@ export class Order extends Entity {
     this.createdBy = props.createdBy
     this.createdAt = props.createdAt
     this.status = OrderStatus.of(props.status)
-    this.items = Object.freeze([...props.items])
+    this.items = Object.freeze(props.items.map((item) => ({ ...item, kind: item.kind ?? 'product' })))
   }
 
   /** Creates a new order, generating item IDs and computing subtotals. */
@@ -53,6 +54,7 @@ export class Order extends Entity {
     }
     const items: OrderItemProps[] = props.items.map((item) => ({
       ...item,
+      kind: item.kind ?? 'product',
       itemId: randomUUID(),
       subtotal: item.quantity * item.unitPrice,
     }))

@@ -19,8 +19,8 @@ describe('ListMenusHandler', () => {
 
   it('returns all menus from the repository', async () => {
     const menus = [
-      Menu.create({ name: 'Menu A', productIds: [], active: true }, 'menu-1'),
-      Menu.create({ name: 'Menu B', productIds: [], active: false }, 'menu-2'),
+      Menu.create({ name: 'Menu A', productIds: [], active: true, price: 100 }, 'menu-1'),
+      Menu.create({ name: 'Menu B', productIds: [], active: false, price: 150 }, 'menu-2'),
     ]
     repo.findAll.mockResolvedValue(menus)
 

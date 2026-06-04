@@ -6,6 +6,7 @@ describe('Menu', () => {
     name: 'Comida corrida',
     productIds: ['prod-1', 'prod-2'],
     active: true,
+    price: 120,
   }
 
   describe('create', () => {
@@ -15,6 +16,11 @@ describe('Menu', () => {
       expect(menu.name).toBe('Comida corrida')
       expect(menu.productIds).toEqual(['prod-1', 'prod-2'])
       expect(menu.active).toBe(true)
+      expect(menu.price).toBe(120)
+    })
+
+    it('throws ValidationError for a negative price', () => {
+      expect(() => Menu.create({ ...baseProps, price: -1 }, 'menu-1')).toThrow(ValidationError)
     })
 
     it('trims the name', () => {
@@ -37,9 +43,10 @@ describe('Menu', () => {
   describe('update', () => {
     it('returns a new menu with the patched fields', () => {
       const menu = Menu.create(baseProps, 'menu-1')
-      const updated = menu.update({ name: 'Especial', productIds: ['prod-3'] })
+      const updated = menu.update({ name: 'Especial', productIds: ['prod-3'], price: 200 })
       expect(updated.name).toBe('Especial')
       expect(updated.productIds).toEqual(['prod-3'])
+      expect(updated.price).toBe(200)
       expect(updated.id).toBe('menu-1')
     })
 

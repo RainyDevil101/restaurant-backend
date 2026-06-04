@@ -4,12 +4,13 @@ import { randomUUID } from 'crypto'
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
 import { PRODUCT_REPOSITORY, type IProductRepository } from '../../../catalog/domain/ports/product.repository.port'
+import { MENU_REPOSITORY, type IMenuRepository } from '../../../catalog/domain/ports/menu.repository.port'
 import { TABLE_REPOSITORY, type ITableRepository } from '../../../venue/domain/ports/table.repository.port'
 import { Order, type OrderCreateProps } from '../../domain/entities/order.entity'
 import { ORDER_NOTIFIER, type IOrderNotifier } from '../../domain/ports/order-notifier.port'
 import { ORDER_REPOSITORY, type IOrderRepository } from '../../domain/ports/order.repository.port'
 import { ENTITY_NAME } from '../../../../shared/constants/entity-names.constants'
-import { PRODUCT_VALIDATION } from '../constants/order-validation-messages.constants'
+import { ITEM_VALIDATION, PRODUCT_VALIDATION } from '../constants/order-validation-messages.constants'
 import { CreateOrderCommand } from './create-order.command'
 
 @CommandHandler(CreateOrderCommand)
@@ -19,6 +20,7 @@ export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand> {
     @Inject(ORDER_REPOSITORY)   private readonly orderRepo: IOrderRepository,
     @Inject(TABLE_REPOSITORY)   private readonly tableRepo: ITableRepository,
     @Inject(PRODUCT_REPOSITORY) private readonly productRepo: IProductRepository,
+    @Inject(MENU_REPOSITORY)    private readonly menuRepo: IMenuRepository,
     @Inject(ORDER_NOTIFIER)     private readonly notifier: IOrderNotifier,
   ) {}
 
@@ -26,19 +28,41 @@ export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand> {
     const table = await this.tableRepo.findById(dto.tableId)
     if (!table) throw new NotFoundError(ENTITY_NAME.TABLE, dto.tableId)
 
-    const products = await this.productRepo.findByIds(dto.items.map((i) => i.productId))
+    const productIds = dto.items.flatMap((i) => (i.productId ? [i.productId] : []))
+    const products = await this.productRepo.findByIds(productIds)
     const productMap = new Map(products.map((p) => [p.id, p]))
 
     const itemProps: OrderCreateProps['items'] = []
     for (const input of dto.items) {
-      const product = productMap.get(input.productId)
-      if (!product) throw new NotFoundError(ENTITY_NAME.PRODUCT, input.productId)
-      if (!product.available) throw new ValidationError('product', PRODUCT_VALIDATION.notAvailable(product.name))
+      const hasProduct = Boolean(input.productId)
+      const hasMenu = Boolean(input.menuId)
+      if (hasProduct === hasMenu) {
+        throw new ValidationError('item', ITEM_VALIDATION.EXACTLY_ONE_REFERENCE)
+      }
+
+      if (input.productId) {
+        const product = productMap.get(input.productId)
+        if (!product) throw new NotFoundError(ENTITY_NAME.PRODUCT, input.productId)
+        if (!product.available) throw new ValidationError('product', PRODUCT_VALIDATION.notAvailable(product.name))
+        itemProps.push({
+          kind: 'product',
+          productId: product.id,
+          productName: product.name,
+          quantity: input.quantity,
+          unitPrice: product.price,
+          notes: input.notes,
+        })
+        continue
+      }
+
+      const menu = await this.menuRepo.findById(input.menuId!)
+      if (!menu) throw new NotFoundError(ENTITY_NAME.MENU, input.menuId!)
       itemProps.push({
-        productId: product.id,
-        productName: product.name,
+        kind: 'combo',
+        productId: menu.id,
+        productName: menu.name,
         quantity: input.quantity,
-        unitPrice: product.price,
+        unitPrice: menu.price,
         notes: input.notes,
       })
     }

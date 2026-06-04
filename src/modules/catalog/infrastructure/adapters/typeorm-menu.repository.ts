@@ -13,7 +13,10 @@ export class TypeormMenuRepository implements IMenuRepository {
   ) {}
 
   private toDomain(row: MenuOrmEntity): Menu {
-    return Menu.create({ name: row.name, productIds: row.productIds, active: row.active }, row.id)
+    return Menu.create(
+      { name: row.name, productIds: row.productIds, active: row.active, price: row.price },
+      row.id,
+    )
   }
 
   private toOrm(menu: Menu): MenuOrmEntity {
@@ -22,6 +25,7 @@ export class TypeormMenuRepository implements IMenuRepository {
     row.name = menu.name
     row.productIds = [...menu.productIds]
     row.active = menu.active
+    row.price = menu.price
     return row
   }
 

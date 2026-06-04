@@ -51,6 +51,6 @@ const HANDLERS = [
     { provide: PRODUCT_REPOSITORY, useClass: TypeormProductRepository },
     { provide: MENU_REPOSITORY, useClass: TypeormMenuRepository },
   ],
-  exports: [PRODUCT_REPOSITORY, CATEGORY_REPOSITORY],
+  exports: [PRODUCT_REPOSITORY, CATEGORY_REPOSITORY, MENU_REPOSITORY],
 })
 export class CatalogModule {}

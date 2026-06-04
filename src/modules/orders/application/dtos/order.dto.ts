@@ -5,8 +5,12 @@ import type { OrderStatusValue } from '../../domain/value-objects/order-status.v
 
 export class OrderItemInputDto {
   @IsString()
-  @IsNotEmpty()
-  productId: string
+  @IsOptional()
+  productId?: string
+
+  @IsString()
+  @IsOptional()
+  menuId?: string
 
   @IsInt()
   @Min(1)

@@ -67,9 +67,10 @@ const MENUS = [
     id: 'menu-1',
     name: 'Menú principal',
     active: true,
+    price: 199,
     productIds: PRODUCTS.filter((p) => p.available).map((p) => p.id),
   },
-  { id: 'menu-2', name: 'Menú de temporada', active: false, productIds: ['prod-1', 'prod-4', 'prod-8', 'prod-10'] },
+  { id: 'menu-2', name: 'Menú de temporada', active: false, price: 149, productIds: ['prod-1', 'prod-4', 'prod-8', 'prod-10'] },
 ]
 
 const USERS = [
@@ -170,7 +171,7 @@ async function seed() {
     )
   }
   for (const m of MENUS) {
-    await menuRepo.save(Menu.create({ name: m.name, productIds: m.productIds, active: m.active }, m.id))
+    await menuRepo.save(Menu.create({ name: m.name, productIds: m.productIds, active: m.active, price: m.price }, m.id))
   }
   for (const u of USERS) {
     await userRepo.save(

@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator'
 
 export class CreateMenuDto {
   @IsString()
@@ -8,6 +8,11 @@ export class CreateMenuDto {
   @IsArray()
   @IsString({ each: true })
   productIds: string[]
+
+  @IsNumber()
+  @Min(0)
+  @Max(99_999_999)
+  price: number
 }
 
 export class UpdateMenuDto {
@@ -20,4 +25,10 @@ export class UpdateMenuDto {
   @IsString({ each: true })
   @IsOptional()
   productIds?: string[]
+
+  @IsNumber()
+  @Min(0)
+  @Max(99_999_999)
+  @IsOptional()
+  price?: number
 }
