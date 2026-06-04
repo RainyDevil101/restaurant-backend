@@ -1,5 +1,6 @@
 import { Entity } from '../../../../shared/domain/entity.base'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
+import { TABLE_VALIDATION } from '../constants/venue-validation-messages.constants'
 import { definedFields } from '../../../../shared/domain/patch'
 import { TableStatus, type TableStatusValue } from '../value-objects/table-status.vo'
 
@@ -25,8 +26,8 @@ export class Table extends Entity {
   }
 
   static create(props: TableProps, id: string): Table {
-    if (!props.name.trim()) throw new ValidationError('name', 'Table name cannot be empty')
-    if (props.capacity < 1) throw new ValidationError('capacity', 'Capacity must be at least 1')
+    if (!props.name.trim()) throw new ValidationError('name', TABLE_VALIDATION.NAME_EMPTY)
+    if (props.capacity < 1) throw new ValidationError('capacity', TABLE_VALIDATION.CAPACITY_MIN)
     return new Table({ ...props, name: props.name.trim() }, id)
   }
 

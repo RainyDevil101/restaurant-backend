@@ -6,6 +6,7 @@ import { PASSWORD_SERVICE, type IPasswordService } from '../../../auth/domain/po
 import { User } from '../../domain/entities/user.entity'
 import { USER_REPOSITORY, type IUserRepository } from '../../domain/ports/user.repository.port'
 import type { UserDto } from '../dtos/user.dto'
+import { USER_ERROR } from '../constants/user-error-messages.constants'
 import { CreateUserCommand } from './create-user.command'
 
 @CommandHandler(CreateUserCommand)
@@ -19,7 +20,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   async execute({ dto }: CreateUserCommand): Promise<UserDto> {
     const email = dto.email.toLowerCase()
     const existing = await this.repo.findByEmail(email)
-    if (existing) throw new ValidationError('email', 'A user with this email already exists')
+    if (existing) throw new ValidationError('email', USER_ERROR.EMAIL_EXISTS)
 
     const hashedCredential = await this.passwordService.hash(dto.credential)
     const user = await this.repo.save(

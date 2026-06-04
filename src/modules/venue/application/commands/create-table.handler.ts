@@ -6,6 +6,7 @@ import { Table } from '../../domain/entities/table.entity'
 import { AREA_REPOSITORY, type IAreaRepository } from '../../domain/ports/area.repository.port'
 import { TABLE_REPOSITORY, type ITableRepository } from '../../domain/ports/table.repository.port'
 import { TABLE_STATUS } from '../../domain/constants/table-status.constants'
+import { VENUE_ENTITY_NAME } from '../constants/venue-error-messages.constants'
 import { CreateTableCommand } from './create-table.command'
 
 @CommandHandler(CreateTableCommand)
@@ -18,7 +19,7 @@ export class CreateTableHandler implements ICommandHandler<CreateTableCommand> {
 
   async execute({ dto }: CreateTableCommand): Promise<Table> {
     const area = await this.areaRepo.findById(dto.areaId)
-    if (!area) throw new NotFoundError('Area', dto.areaId)
+    if (!area) throw new NotFoundError(VENUE_ENTITY_NAME.AREA, dto.areaId)
 
     return this.tableRepo.save(
       Table.create(

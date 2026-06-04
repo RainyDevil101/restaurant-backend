@@ -8,6 +8,7 @@ import { TABLE_REPOSITORY, type ITableRepository } from '../../../venue/domain/p
 import { Order, type OrderCreateProps } from '../../domain/entities/order.entity'
 import { ORDER_NOTIFIER, type IOrderNotifier } from '../../domain/ports/order-notifier.port'
 import { ORDER_REPOSITORY, type IOrderRepository } from '../../domain/ports/order.repository.port'
+import { ENTITY_NAME } from '../../../../shared/constants/entity-names.constants'
 import { CreateOrderCommand } from './create-order.command'
 
 @CommandHandler(CreateOrderCommand)
@@ -22,7 +23,7 @@ export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand> {
 
   async execute({ dto, createdBy }: CreateOrderCommand): Promise<Order> {
     const table = await this.tableRepo.findById(dto.tableId)
-    if (!table) throw new NotFoundError('Table', dto.tableId)
+    if (!table) throw new NotFoundError(ENTITY_NAME.TABLE, dto.tableId)
 
     const products = await this.productRepo.findByIds(dto.items.map((i) => i.productId))
     const productMap = new Map(products.map((p) => [p.id, p]))
@@ -30,7 +31,7 @@ export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand> {
     const itemProps: OrderCreateProps['items'] = []
     for (const input of dto.items) {
       const product = productMap.get(input.productId)
-      if (!product) throw new NotFoundError('Product', input.productId)
+      if (!product) throw new NotFoundError(ENTITY_NAME.PRODUCT, input.productId)
       if (!product.available) throw new ValidationError('product', `"${product.name}" is not available`)
       itemProps.push({
         productId: product.id,

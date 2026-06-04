@@ -4,6 +4,7 @@ import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import type { Order } from '../../domain/entities/order.entity'
 import { ORDER_NOTIFIER, type IOrderNotifier } from '../../domain/ports/order-notifier.port'
 import { ORDER_REPOSITORY, type IOrderRepository } from '../../domain/ports/order.repository.port'
+import { ORDER_ENTITY_NAME } from '../constants/order-error-messages.constants'
 import { UpdateOrderStatusCommand } from './update-order-status.command'
 
 @CommandHandler(UpdateOrderStatusCommand)
@@ -16,7 +17,7 @@ export class UpdateOrderStatusHandler implements ICommandHandler<UpdateOrderStat
 
   async execute({ id, status }: UpdateOrderStatusCommand): Promise<Order> {
     const order = await this.orderRepo.findById(id)
-    if (!order) throw new NotFoundError('Order', id)
+    if (!order) throw new NotFoundError(ORDER_ENTITY_NAME, id)
     const saved = await this.orderRepo.update(order.updateStatus(status))
     this.notifier.notifyStatusChanged(saved)
     return saved

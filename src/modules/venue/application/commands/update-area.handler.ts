@@ -3,6 +3,7 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs'
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import type { Area } from '../../domain/entities/area.entity'
 import { AREA_REPOSITORY, type IAreaRepository } from '../../domain/ports/area.repository.port'
+import { VENUE_ENTITY_NAME } from '../constants/venue-error-messages.constants'
 import { UpdateAreaCommand } from './update-area.command'
 
 @CommandHandler(UpdateAreaCommand)
@@ -12,7 +13,7 @@ export class UpdateAreaHandler implements ICommandHandler<UpdateAreaCommand> {
 
   async execute({ id, dto }: UpdateAreaCommand): Promise<Area> {
     const area = await this.repo.findById(id)
-    if (!area) throw new NotFoundError('Area', id)
+    if (!area) throw new NotFoundError(VENUE_ENTITY_NAME.AREA, id)
     return this.repo.update(dto.name ? area.rename(dto.name) : area)
   }
 }

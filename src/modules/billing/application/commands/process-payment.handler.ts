@@ -5,6 +5,7 @@ import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
 import { TABLE_STATUS } from '../../../venue/domain/constants/table-status.constants'
 import { TABLE_REPOSITORY, type ITableRepository } from '../../../venue/domain/ports/table.repository.port'
+import { BILL_ENTITY_NAME, BILL_ERROR } from '../constants/billing-error-messages.constants'
 import { PAYMENT_METHOD } from '../../domain/constants/payment-method.constants'
 import { Payment } from '../../domain/entities/payment.entity'
 import { BILL_REPOSITORY, type IBillRepository } from '../../domain/ports/bill.repository.port'
@@ -22,8 +23,8 @@ export class ProcessPaymentHandler implements ICommandHandler<ProcessPaymentComm
 
   async execute({ tableId, dto }: ProcessPaymentCommand): Promise<Payment> {
     const bill = await this.billRepo.findByTable(tableId)
-    if (!bill) throw new NotFoundError('Bill', tableId)
-    if (bill.paid) throw new ValidationError('bill', 'This bill has already been paid')
+    if (!bill) throw new NotFoundError(BILL_ENTITY_NAME, tableId)
+    if (bill.paid) throw new ValidationError('bill', BILL_ERROR.ALREADY_PAID)
     if (dto.amount < bill.total) {
       throw new ValidationError('amount', `Amount ${dto.amount} is less than total ${bill.total}`)
     }

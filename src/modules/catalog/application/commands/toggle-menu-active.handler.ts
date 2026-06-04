@@ -3,6 +3,7 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs'
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import type { Menu } from '../../domain/entities/menu.entity'
 import { MENU_REPOSITORY, type IMenuRepository } from '../../domain/ports/menu.repository.port'
+import { CATALOG_ENTITY_NAME } from '../constants/catalog-error-messages.constants'
 import { ToggleMenuActiveCommand } from './toggle-menu-active.command'
 
 @CommandHandler(ToggleMenuActiveCommand)
@@ -12,7 +13,7 @@ export class ToggleMenuActiveHandler implements ICommandHandler<ToggleMenuActive
 
   async execute({ id }: ToggleMenuActiveCommand): Promise<Menu> {
     const menu = await this.repo.findById(id)
-    if (!menu) throw new NotFoundError('Menu', id)
+    if (!menu) throw new NotFoundError(CATALOG_ENTITY_NAME.MENU, id)
     return this.repo.update(menu.toggleActive())
   }
 }

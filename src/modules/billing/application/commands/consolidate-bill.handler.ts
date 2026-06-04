@@ -6,6 +6,7 @@ import { ORDER_REPOSITORY, type IOrderRepository } from '../../../orders/domain/
 import { ORDER_STATUS } from '../../../orders/domain/constants/order-status.constants'
 import { Bill, type BillItemProps } from '../../domain/entities/bill.entity'
 import { BILL_REPOSITORY, type IBillRepository } from '../../domain/ports/bill.repository.port'
+import { BILL_ERROR } from '../constants/billing-error-messages.constants'
 import { ConsolidateBillCommand } from './consolidate-bill.command'
 
 @CommandHandler(ConsolidateBillCommand)
@@ -22,7 +23,7 @@ export class ConsolidateBillHandler implements ICommandHandler<ConsolidateBillCo
 
     const deliveredOrders = await this.orderRepo.findAll({ tableId, status: ORDER_STATUS.DELIVERED })
     if (deliveredOrders.length === 0) {
-      throw new ValidationError('orders', 'No delivered orders found for this table')
+      throw new ValidationError('orders', BILL_ERROR.NO_DELIVERED_ORDERS)
     }
 
     const itemMap = new Map<string, BillItemProps>()

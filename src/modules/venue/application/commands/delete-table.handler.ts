@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs'
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import { TABLE_REPOSITORY, type ITableRepository } from '../../domain/ports/table.repository.port'
+import { ENTITY_NAME } from '../../../../shared/constants/entity-names.constants'
 import { DeleteTableCommand } from './delete-table.command'
 
 @CommandHandler(DeleteTableCommand)
@@ -11,7 +12,7 @@ export class DeleteTableHandler implements ICommandHandler<DeleteTableCommand> {
 
   async execute({ id }: DeleteTableCommand): Promise<void> {
     const table = await this.repo.findById(id)
-    if (!table) throw new NotFoundError('Table', id)
+    if (!table) throw new NotFoundError(ENTITY_NAME.TABLE, id)
     await this.repo.delete(id)
   }
 }

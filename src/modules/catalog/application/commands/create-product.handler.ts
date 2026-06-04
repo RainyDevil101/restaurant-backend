@@ -5,6 +5,7 @@ import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import { Product } from '../../domain/entities/product.entity'
 import { CATEGORY_REPOSITORY, type ICategoryRepository } from '../../domain/ports/category.repository.port'
 import { PRODUCT_REPOSITORY, type IProductRepository } from '../../domain/ports/product.repository.port'
+import { CATALOG_ENTITY_NAME } from '../constants/catalog-error-messages.constants'
 import { CreateProductCommand } from './create-product.command'
 
 @CommandHandler(CreateProductCommand)
@@ -17,7 +18,7 @@ export class CreateProductHandler implements ICommandHandler<CreateProductComman
 
   async execute({ dto }: CreateProductCommand): Promise<Product> {
     const category = await this.categoryRepo.findById(dto.categoryId)
-    if (!category) throw new NotFoundError('Category', dto.categoryId)
+    if (!category) throw new NotFoundError(CATALOG_ENTITY_NAME.CATEGORY, dto.categoryId)
     return this.productRepo.save(Product.create({ ...dto, available: true }, randomUUID()))
   }
 }

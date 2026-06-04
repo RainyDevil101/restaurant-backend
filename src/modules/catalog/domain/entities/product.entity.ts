@@ -1,5 +1,6 @@
 import { Entity } from '../../../../shared/domain/entity.base'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
+import { PRODUCT_VALIDATION } from '../constants/catalog-validation-messages.constants'
 import { definedFields } from '../../../../shared/domain/patch'
 
 export interface ProductProps {
@@ -27,8 +28,8 @@ export class Product extends Entity {
   }
 
   static create(props: ProductProps, id: string): Product {
-    if (!props.name.trim()) throw new ValidationError('name', 'Product name cannot be empty')
-    if (props.price < 0) throw new ValidationError('price', 'Price cannot be negative')
+    if (!props.name.trim()) throw new ValidationError('name', PRODUCT_VALIDATION.NAME_EMPTY)
+    if (props.price < 0) throw new ValidationError('price', PRODUCT_VALIDATION.PRICE_NEGATIVE)
     return new Product({ ...props, name: props.name.trim() }, id)
   }
 

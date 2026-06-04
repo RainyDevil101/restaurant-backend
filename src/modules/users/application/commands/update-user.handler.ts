@@ -6,6 +6,7 @@ import { PASSWORD_SERVICE, type IPasswordService } from '../../../auth/domain/po
 import { User, type UserProps } from '../../domain/entities/user.entity'
 import { USER_REPOSITORY, type IUserRepository } from '../../domain/ports/user.repository.port'
 import type { UserDto } from '../dtos/user.dto'
+import { USER_ENTITY_NAME, USER_ERROR } from '../constants/user-error-messages.constants'
 import { UpdateUserCommand } from './update-user.command'
 
 @CommandHandler(UpdateUserCommand)
@@ -18,7 +19,7 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
 
   async execute({ id, dto }: UpdateUserCommand): Promise<UserDto> {
     const current = await this.repo.findById(id)
-    if (!current) throw new NotFoundError('User', id)
+    if (!current) throw new NotFoundError(USER_ENTITY_NAME, id)
 
     const nextProps: UserProps = {
       name: dto.name ?? current.name,
@@ -32,7 +33,7 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
       const email = dto.email.toLowerCase()
       const owner = await this.repo.findByEmail(email)
       if (owner && owner.id !== id) {
-        throw new ValidationError('email', 'A user with this email already exists')
+        throw new ValidationError('email', USER_ERROR.EMAIL_EXISTS)
       }
       nextProps.email = email
     }

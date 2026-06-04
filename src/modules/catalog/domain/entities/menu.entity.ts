@@ -1,5 +1,6 @@
 import { Entity } from '../../../../shared/domain/entity.base'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
+import { MENU_VALIDATION } from '../constants/catalog-validation-messages.constants'
 import { definedFields } from '../../../../shared/domain/patch'
 
 export interface MenuProps {
@@ -21,7 +22,7 @@ export class Menu extends Entity {
   }
 
   static create(props: MenuProps, id: string): Menu {
-    if (!props.name.trim()) throw new ValidationError('name', 'Menu name cannot be empty')
+    if (!props.name.trim()) throw new ValidationError('name', MENU_VALIDATION.NAME_EMPTY)
     return new Menu({ ...props, name: props.name.trim() }, id)
   }
 
