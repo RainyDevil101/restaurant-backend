@@ -6,6 +6,8 @@ import { ValidationError } from '../../../../shared/domain/errors/validation.err
 import { InvalidCredentialsError } from '../../../auth/domain/errors/invalid-credentials.error'
 import { PASSWORD_SERVICE, type IPasswordService } from '../../../auth/domain/ports/password.service.port'
 import { USER_REPOSITORY, type IUserRepository } from '../../../users/domain/ports/user.repository.port'
+import { TABLE_REPOSITORY, type ITableRepository } from '../../../venue/domain/ports/table.repository.port'
+import { TABLE_STATUS } from '../../../venue/domain/constants/table-status.constants'
 import type { Order } from '../../domain/entities/order.entity'
 import { ORDER_STATUS } from '../../domain/constants/order-status.constants'
 import { ORDER_VALIDATION } from '../../domain/constants/order-validation-messages.constants'
@@ -22,6 +24,7 @@ export class CancelOrderHandler implements ICommandHandler<CancelOrderCommand> {
     @Inject(ORDER_NOTIFIER) private readonly notifier: IOrderNotifier,
     @Inject(USER_REPOSITORY) private readonly userRepo: IUserRepository,
     @Inject(PASSWORD_SERVICE) private readonly passwordService: IPasswordService,
+    @Inject(TABLE_REPOSITORY) private readonly tableRepo: ITableRepository,
   ) {}
 
   async execute({ orderId, reason, adminEmail, adminCredential }: CancelOrderCommand): Promise<Order> {
@@ -48,6 +51,18 @@ export class CancelOrderHandler implements ICommandHandler<CancelOrderCommand> {
       order.cancel({ reason: trimmedReason, cancelledBy: admin.id }),
     )
     this.notifier.notifyStatusChanged(cancelled)
+
+    const tableOrders = await this.orderRepo.findAll({ tableId: cancelled.tableId })
+    const stillActive = tableOrders.some(
+      (o) => o.status.value !== ORDER_STATUS.CANCELLED && !o.paid,
+    )
+    if (!stillActive) {
+      const table = await this.tableRepo.findById(cancelled.tableId)
+      if (table && table.status.value !== TABLE_STATUS.FREE) {
+        await this.tableRepo.update(table.updateStatus(TABLE_STATUS.FREE))
+      }
+    }
+
     return cancelled
   }
 }

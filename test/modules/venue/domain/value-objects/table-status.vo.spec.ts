@@ -42,9 +42,9 @@ describe('TableStatus', () => {
       expect(() => TableStatus.of(TABLE_STATUS.FREE).transitionTo(next)).toThrow(ValidationError)
     })
 
-    it('rejects occupied to free', () => {
+    it('allows occupied to free', () => {
       const next = TableStatus.of(TABLE_STATUS.FREE)
-      expect(() => TableStatus.of(TABLE_STATUS.OCCUPIED).transitionTo(next)).toThrow(ValidationError)
+      expect(TableStatus.of(TABLE_STATUS.OCCUPIED).transitionTo(next)).toBe(next)
     })
 
     it('rejects pending payment to occupied', () => {

@@ -6,6 +6,9 @@ import type { IOrderRepository } from '@src/modules/orders/domain/ports/order.re
 import type { IOrderNotifier } from '@src/modules/orders/domain/ports/order-notifier.port'
 import type { IUserRepository } from '@src/modules/users/domain/ports/user.repository.port'
 import type { IPasswordService } from '@src/modules/auth/domain/ports/password.service.port'
+import type { ITableRepository } from '@src/modules/venue/domain/ports/table.repository.port'
+import { Table } from '@src/modules/venue/domain/entities/table.entity'
+import { TABLE_STATUS } from '@src/modules/venue/domain/constants/table-status.constants'
 import { User } from '@src/modules/users/domain/entities/user.entity'
 import { NotFoundError } from '@src/shared/domain/errors/not-found.error'
 import { ValidationError } from '@src/shared/domain/errors/validation.error'
@@ -21,6 +24,9 @@ const buildOrder = (status = ORDER_STATUS.PENDING, paid = false) => {
   )
   return paid ? order.markPaid() : order
 }
+
+const occupiedTable = () =>
+  Table.create({ name: 'Mesa 1', capacity: 4, status: TABLE_STATUS.OCCUPIED, areaId: 'area-1' }, 'table-1')
 
 const adminUser = (overrides: Partial<{ active: boolean; role: (typeof ROLE)[keyof typeof ROLE] }> = {}) =>
   User.create(
@@ -39,6 +45,7 @@ describe('CancelOrderHandler', () => {
   let notifier: jest.Mocked<IOrderNotifier>
   let userRepo: jest.Mocked<IUserRepository>
   let passwordService: jest.Mocked<IPasswordService>
+  let tableRepo: jest.Mocked<ITableRepository>
   let handler: CancelOrderHandler
 
   const command = (overrides: Partial<{ reason: string }> = {}) =>
@@ -46,7 +53,7 @@ describe('CancelOrderHandler', () => {
 
   beforeEach(() => {
     orderRepo = {
-      findAll: jest.fn(),
+      findAll: jest.fn().mockResolvedValue([]),
       findById: jest.fn().mockResolvedValue(buildOrder()),
       save: jest.fn(),
       update: jest.fn((order: Order) => Promise.resolve(order)),
@@ -60,7 +67,14 @@ describe('CancelOrderHandler', () => {
       update: jest.fn(),
     }
     passwordService = { hash: jest.fn(), compare: jest.fn().mockResolvedValue(true) }
-    handler = new CancelOrderHandler(orderRepo, notifier, userRepo, passwordService)
+    tableRepo = {
+      findAll: jest.fn(),
+      findById: jest.fn().mockResolvedValue(occupiedTable()),
+      save: jest.fn(),
+      update: jest.fn((table: Table) => Promise.resolve(table)),
+      delete: jest.fn(),
+    }
+    handler = new CancelOrderHandler(orderRepo, notifier, userRepo, passwordService, tableRepo)
   })
 
   it('cancels a pending order with valid admin credentials', async () => {
@@ -144,5 +158,26 @@ describe('CancelOrderHandler', () => {
   it('throws ValidationError when the reason is blank', async () => {
     await expect(handler.execute(command({ reason: '   ' }))).rejects.toThrow(ValidationError)
     expect(orderRepo.update).not.toHaveBeenCalled()
+  })
+
+  it('frees the table when cancelling its last active order', async () => {
+    orderRepo.findAll.mockResolvedValue([buildOrder(ORDER_STATUS.CANCELLED)])
+
+    await handler.execute(command())
+
+    expect(orderRepo.findAll).toHaveBeenCalledWith({ tableId: 'table-1' })
+    expect(tableRepo.update).toHaveBeenCalledTimes(1)
+    expect(tableRepo.update.mock.calls[0][0].status.value).toBe(TABLE_STATUS.FREE)
+  })
+
+  it('keeps the table occupied when another active order remains', async () => {
+    orderRepo.findAll.mockResolvedValue([
+      buildOrder(ORDER_STATUS.CANCELLED),
+      buildOrder(ORDER_STATUS.DELIVERED),
+    ])
+
+    await handler.execute(command())
+
+    expect(tableRepo.update).not.toHaveBeenCalled()
   })
 })
