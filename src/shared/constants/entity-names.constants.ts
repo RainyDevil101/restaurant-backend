@@ -1,5 +1,5 @@
 export const ENTITY_NAME = {
-  TABLE: 'Table',
-  PRODUCT: 'Product',
-  MENU: 'Menu',
+  TABLE: 'Mesa',
+  PRODUCT: 'Producto',
+  MENU: 'Menú',
 } as const

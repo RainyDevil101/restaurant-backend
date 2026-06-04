@@ -27,7 +27,7 @@ export class OrderStatus extends ValueObject<{ value: OrderStatusValue }> {
 
   static of(value: string): OrderStatus {
     if (!VALID.includes(value as OrderStatusValue)) {
-      throw new ValidationError('orderStatus', `"${value}" is not a valid order status`)
+      throw new ValidationError('orderStatus', `"${value}" no es un estado de pedido válido`)
     }
     return new OrderStatus(value as OrderStatusValue)
   }
@@ -48,7 +48,7 @@ export class OrderStatus extends ValueObject<{ value: OrderStatusValue }> {
     if (!TRANSITIONS[this.value].includes(next.value)) {
       throw new ValidationError(
         'orderStatus',
-        `Cannot transition from "${this.value}" to "${next.value}"`,
+        `No se puede pasar de "${this.value}" a "${next.value}"`,
       )
     }
     return next

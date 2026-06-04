@@ -24,7 +24,7 @@ export class TableStatus extends ValueObject<{ value: TableStatusValue }> {
 
   static of(value: string): TableStatus {
     if (!VALID.includes(value as TableStatusValue)) {
-      throw new ValidationError('tableStatus', `"${value}" is not a valid table status`)
+      throw new ValidationError('tableStatus', `"${value}" no es un estado de mesa válido`)
     }
     return new TableStatus(value as TableStatusValue)
   }
@@ -41,7 +41,7 @@ export class TableStatus extends ValueObject<{ value: TableStatusValue }> {
     if (!TRANSITIONS[this.value].includes(next.value)) {
       throw new ValidationError(
         'tableStatus',
-        `Cannot transition from "${this.value}" to "${next.value}"`,
+        `No se puede pasar de "${this.value}" a "${next.value}"`,
       )
     }
     return next

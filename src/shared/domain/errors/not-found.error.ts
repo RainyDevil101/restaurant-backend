@@ -4,6 +4,6 @@ export class NotFoundError extends DomainError {
   override readonly httpStatus = 404
 
   constructor(entity: string, identifier: string) {
-    super(`${entity} with identifier "${identifier}" was not found`)
+    super(`No se encontró ${entity} con identificador "${identifier}"`)
   }
 }

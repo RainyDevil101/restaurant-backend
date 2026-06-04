@@ -2,8 +2,10 @@ import { DomainError } from './domain.error'
 
 export class ValidationError extends DomainError {
   override readonly httpStatus = 422
+  readonly field: string
 
   constructor(field: string, reason: string) {
-    super(`Validation failed for "${field}": ${reason}`)
+    super(reason)
+    this.field = field
   }
 }

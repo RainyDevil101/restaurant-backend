@@ -50,7 +50,7 @@ export class Order extends Entity {
   /** Creates a new order, generating item IDs and computing subtotals. */
   static create(props: OrderCreateProps, id: string): Order {
     if (props.items.length === 0) {
-      throw new ValidationError('items', 'An order must have at least one item')
+      throw new ValidationError('items', 'El pedido debe tener al menos un artículo')
     }
     const items: OrderItemProps[] = props.items.map((item) => ({
       ...item,

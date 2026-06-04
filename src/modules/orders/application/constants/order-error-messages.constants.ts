@@ -1,1 +1,1 @@
-export const ORDER_ENTITY_NAME = 'Order'
+export const ORDER_ENTITY_NAME = 'Pedido'

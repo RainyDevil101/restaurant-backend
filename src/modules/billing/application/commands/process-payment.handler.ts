@@ -26,7 +26,7 @@ export class ProcessPaymentHandler implements ICommandHandler<ProcessPaymentComm
     if (!bill) throw new NotFoundError(BILL_ENTITY_NAME, tableId)
     if (bill.paid) throw new ValidationError('bill', BILL_ERROR.ALREADY_PAID)
     if (dto.amount < bill.total) {
-      throw new ValidationError('amount', `Amount ${dto.amount} is less than total ${bill.total}`)
+      throw new ValidationError('amount', `El monto (${dto.amount}) es menor que el total (${bill.total})`)
     }
 
     const change = dto.method === PAYMENT_METHOD.CASH ? dto.amount - bill.total : 0
