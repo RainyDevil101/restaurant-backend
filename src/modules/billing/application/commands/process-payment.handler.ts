@@ -3,7 +3,9 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs'
 import { randomUUID } from 'crypto'
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
+import { TABLE_STATUS } from '../../../venue/domain/constants/table-status.constants'
 import { TABLE_REPOSITORY, type ITableRepository } from '../../../venue/domain/ports/table.repository.port'
+import { PAYMENT_METHOD } from '../../domain/constants/payment-method.constants'
 import { Payment } from '../../domain/entities/payment.entity'
 import { BILL_REPOSITORY, type IBillRepository } from '../../domain/ports/bill.repository.port'
 import { PAYMENT_REPOSITORY, type IPaymentRepository } from '../../domain/ports/payment.repository.port'
@@ -26,7 +28,7 @@ export class ProcessPaymentHandler implements ICommandHandler<ProcessPaymentComm
       throw new ValidationError('amount', `Amount ${dto.amount} is less than total ${bill.total}`)
     }
 
-    const change = dto.method === 'efectivo' ? dto.amount - bill.total : 0
+    const change = dto.method === PAYMENT_METHOD.CASH ? dto.amount - bill.total : 0
     const payment = Payment.create(
       { billId: bill.id, tableId, amount: dto.amount, method: dto.method, change, paidAt: new Date() },
       randomUUID(),
@@ -37,8 +39,8 @@ export class ProcessPaymentHandler implements ICommandHandler<ProcessPaymentComm
     await this.billRepo.update(bill)
 
     const table = await this.tableRepo.findById(tableId)
-    if (table?.status.value === 'por_cobrar') {
-      await this.tableRepo.update(table.updateStatus('libre'))
+    if (table?.status.value === TABLE_STATUS.PENDING_PAYMENT) {
+      await this.tableRepo.update(table.updateStatus(TABLE_STATUS.FREE))
     }
 
     return payment

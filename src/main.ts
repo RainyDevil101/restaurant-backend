@@ -4,6 +4,7 @@ import { json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { buildCorsOptions } from './config/cors.config';
+import { HTTP_CONFIG } from './shared/constants/env-defaults.constants';
 import { AppLogger } from './shared/infrastructure/logging/app-logger.service';
 
 async function bootstrap() {
@@ -15,10 +16,10 @@ async function bootstrap() {
   app.getHttpAdapter().getInstance().set('trust proxy', 1);
 
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-  app.use(json({ limit: '100kb' }));
-  app.use(urlencoded({ extended: true, limit: '100kb' }));
+  app.use(json({ limit: HTTP_CONFIG.BODY_LIMIT }));
+  app.use(urlencoded({ extended: true, limit: HTTP_CONFIG.BODY_LIMIT }));
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix(HTTP_CONFIG.GLOBAL_PREFIX);
 
   app.useGlobalPipes(
     new ValidationPipe({

@@ -1,5 +1,6 @@
 import { gzipSync } from 'zlib'
 import { Client } from 'pg'
+import { BACKUP_PREFIX } from './backup-driver.constants'
 
 export interface DumpResult {
   filename: string
@@ -52,7 +53,7 @@ export async function createDump(databaseUrl: string): Promise<DumpResult> {
     const sql = lines.join('\n') + '\n'
     const stamp = new Date().toISOString().replace(/[:.]/g, '-')
     return {
-      filename: `subito-backup-${stamp}.sql.gz`,
+      filename: `${BACKUP_PREFIX}${stamp}.sql.gz`,
       contents: gzipSync(Buffer.from(sql, 'utf8')),
       tableCounts: counts,
     }

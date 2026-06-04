@@ -1,4 +1,6 @@
 import Joi from 'joi'
+import { BACKUP_DRIVER } from '../database/backup/backup-driver.constants'
+import { ENV_DEFAULTS } from '../shared/constants/env-defaults.constants'
 
 export const envValidationSchema = Joi.object({
   NODE_ENV: Joi.string()
@@ -8,7 +10,7 @@ export const envValidationSchema = Joi.object({
   PORT: Joi.number().integer().min(1).max(65535).default(3001),
 
   CORS_ORIGIN: Joi.string()
-    .default('http://localhost:5173')
+    .default(ENV_DEFAULTS.CORS_ORIGIN)
     .custom((value, helpers) => {
       const origins = value
         .split(',')
@@ -28,7 +30,7 @@ export const envValidationSchema = Joi.object({
 
   JWT_EXPIRES_IN: Joi.string()
     .pattern(/^\d+[smhd]$/)
-    .default('7d')
+    .default(ENV_DEFAULTS.JWT_EXPIRES_IN)
     .messages({
       'string.pattern.base': 'JWT_EXPIRES_IN must be a duration like 60s, 15m, 7d, or 1h',
     }),
@@ -37,19 +39,19 @@ export const envValidationSchema = Joi.object({
     'any.required': 'DATABASE_URL is required',
   }),
 
-  THROTTLE_TTL: Joi.number().integer().min(1000).default(60000),
+  THROTTLE_TTL: Joi.number().integer().min(1000).default(ENV_DEFAULTS.THROTTLE_TTL),
 
-  THROTTLE_LIMIT: Joi.number().integer().min(1).default(100),
+  THROTTLE_LIMIT: Joi.number().integer().min(1).default(ENV_DEFAULTS.THROTTLE_LIMIT),
 
-  BACKUP_CRON: Joi.string().default('0 12 * * *'),
+  BACKUP_CRON: Joi.string().default(ENV_DEFAULTS.BACKUP_CRON),
 
-  BACKUP_TIMEZONE: Joi.string().default('UTC'),
+  BACKUP_TIMEZONE: Joi.string().default(ENV_DEFAULTS.BACKUP_TIMEZONE),
 
-  BACKUP_RETENTION_DAYS: Joi.number().integer().min(1).default(14),
+  BACKUP_RETENTION_DAYS: Joi.number().integer().min(1).default(ENV_DEFAULTS.BACKUP_RETENTION_DAYS),
 
-  BACKUP_DIR: Joi.string().default('./backups'),
+  BACKUP_DIR: Joi.string().default(ENV_DEFAULTS.BACKUP_DIR),
 
-  BACKUP_DRIVER: Joi.string().valid('local', 's3').default('local'),
+  BACKUP_DRIVER: Joi.string().valid(BACKUP_DRIVER.LOCAL, BACKUP_DRIVER.S3).default(ENV_DEFAULTS.BACKUP_DRIVER),
 
   S3_ENDPOINT: Joi.string().when('BACKUP_DRIVER', {
     is: 's3',

@@ -5,6 +5,7 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3'
 import type { BackupStorage } from './backup-storage.port'
+import { BACKUP_CONTENT_TYPE, BACKUP_PREFIX } from './backup-driver.constants'
 
 export interface S3StorageConfig {
   endpoint: string
@@ -14,8 +15,6 @@ export interface S3StorageConfig {
   secretAccessKey: string
   prefix: string
 }
-
-const BACKUP_PREFIX = 'subito-backup-'
 
 export class S3Storage implements BackupStorage {
   private readonly client: S3Client
@@ -42,7 +41,7 @@ export class S3Storage implements BackupStorage {
         Bucket: this.config.bucket,
         Key: this.key(filename),
         Body: contents,
-        ContentType: 'application/gzip',
+        ContentType: BACKUP_CONTENT_TYPE.GZIP,
       }),
     )
   }

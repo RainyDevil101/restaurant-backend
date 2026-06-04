@@ -1,8 +1,7 @@
 import { mkdir, readdir, stat, unlink, writeFile } from 'fs/promises'
 import { join } from 'path'
 import type { BackupStorage } from './backup-storage.port'
-
-const BACKUP_PREFIX = 'subito-backup-'
+import { BACKUP_PREFIX } from './backup-driver.constants'
 
 export class LocalDiskStorage implements BackupStorage {
   constructor(private readonly directory: string) {}
