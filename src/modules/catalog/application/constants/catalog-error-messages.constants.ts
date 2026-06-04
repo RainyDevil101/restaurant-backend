@@ -9,4 +9,5 @@ export const CATEGORY_ERROR = {
 
 export const PRODUCT_ERROR_MSG = {
   IN_MENUS: 'está incluido en uno o más menús y no puede eliminarse',
+  IN_MENUS_DEACTIVATE: 'está incluido en uno o más menús; quítalo del menú antes de desactivarlo',
 } as const
