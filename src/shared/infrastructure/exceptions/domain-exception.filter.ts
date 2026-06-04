@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common'
 import type { Request, Response } from 'express'
 import { DomainError } from '../../domain/errors/domain.error'
+import { HTTP_ERROR_MSG } from '../constants/http-error-messages.constants'
 import { AppLogger } from '../logging/app-logger.service'
 
 export interface ErrorResponseBody {
@@ -76,7 +77,7 @@ export class DomainExceptionFilter implements ExceptionFilter {
     return {
       status: 500,
       error: 'InternalServerError',
-      message: isDev && exception instanceof Error ? exception.message : 'Internal server error',
+      message: isDev && exception instanceof Error ? exception.message : HTTP_ERROR_MSG.INTERNAL_SERVER_ERROR,
     }
   }
 }

@@ -1,6 +1,6 @@
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
 import { ValueObject } from '../../../../shared/domain/value-object.base'
-import { TABLE_STATUS } from '../constants/table-status.constants'
+import { TABLE_STATUS, TABLE_STATUS_VALIDATION } from '../constants/table-status.constants'
 
 export type TableStatusValue = (typeof TABLE_STATUS)[keyof typeof TABLE_STATUS]
 
@@ -24,7 +24,7 @@ export class TableStatus extends ValueObject<{ value: TableStatusValue }> {
 
   static of(value: string): TableStatus {
     if (!VALID.includes(value as TableStatusValue)) {
-      throw new ValidationError('tableStatus', `"${value}" no es un estado de mesa válido`)
+      throw new ValidationError('tableStatus', TABLE_STATUS_VALIDATION.INVALID_VALUE(value))
     }
     return new TableStatus(value as TableStatusValue)
   }
@@ -41,7 +41,7 @@ export class TableStatus extends ValueObject<{ value: TableStatusValue }> {
     if (!TRANSITIONS[this.value].includes(next.value)) {
       throw new ValidationError(
         'tableStatus',
-        `No se puede pasar de "${this.value}" a "${next.value}"`,
+        TABLE_STATUS_VALIDATION.INVALID_TRANSITION(this.value, next.value),
       )
     }
     return next

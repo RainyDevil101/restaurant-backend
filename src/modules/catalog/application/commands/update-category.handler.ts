@@ -3,7 +3,7 @@ import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs'
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import type { Category } from '../../domain/entities/category.entity'
 import { CATEGORY_REPOSITORY, type ICategoryRepository } from '../../domain/ports/category.repository.port'
-import { CATALOG_ENTITY_NAME } from '../constants/catalog-error-messages.constants'
+import { ENTITY_NAME } from '../../../../shared/constants/entity-names.constants'
 import { UpdateCategoryCommand } from './update-category.command'
 
 @CommandHandler(UpdateCategoryCommand)
@@ -13,7 +13,7 @@ export class UpdateCategoryHandler implements ICommandHandler<UpdateCategoryComm
 
   async execute({ id, dto }: UpdateCategoryCommand): Promise<Category> {
     const category = await this.repo.findById(id)
-    if (!category) throw new NotFoundError(CATALOG_ENTITY_NAME.CATEGORY, id)
+    if (!category) throw new NotFoundError(ENTITY_NAME.CATEGORY, id)
     return this.repo.update(dto.name ? category.rename(dto.name) : category)
   }
 }

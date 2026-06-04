@@ -1,6 +1,6 @@
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
 import { ValueObject } from '../../../../shared/domain/value-object.base'
-import { ORDER_STATUS } from '../constants/order-status.constants'
+import { ORDER_STATUS, ORDER_STATUS_VALIDATION } from '../constants/order-status.constants'
 
 export type OrderStatusValue = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS]
 
@@ -27,7 +27,7 @@ export class OrderStatus extends ValueObject<{ value: OrderStatusValue }> {
 
   static of(value: string): OrderStatus {
     if (!VALID.includes(value as OrderStatusValue)) {
-      throw new ValidationError('orderStatus', `"${value}" no es un estado de pedido válido`)
+      throw new ValidationError('orderStatus', ORDER_STATUS_VALIDATION.INVALID_VALUE(value))
     }
     return new OrderStatus(value as OrderStatusValue)
   }
@@ -48,7 +48,7 @@ export class OrderStatus extends ValueObject<{ value: OrderStatusValue }> {
     if (!TRANSITIONS[this.value].includes(next.value)) {
       throw new ValidationError(
         'orderStatus',
-        `No se puede pasar de "${this.value}" a "${next.value}"`,
+        ORDER_STATUS_VALIDATION.INVALID_TRANSITION(this.value, next.value),
       )
     }
     return next

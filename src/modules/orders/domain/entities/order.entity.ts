@@ -3,6 +3,7 @@ import { Entity } from '../../../../shared/domain/entity.base'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
 import { OrderStatus, type OrderStatusValue } from '../value-objects/order-status.vo'
 import { ORDER_STATUS } from '../constants/order-status.constants'
+import { ORDER_VALIDATION } from '../constants/order-validation-messages.constants'
 
 export interface OrderItemProps {
   itemId: string
@@ -50,7 +51,7 @@ export class Order extends Entity {
   /** Creates a new order, generating item IDs and computing subtotals. */
   static create(props: OrderCreateProps, id: string): Order {
     if (props.items.length === 0) {
-      throw new ValidationError('items', 'El pedido debe tener al menos un artículo')
+      throw new ValidationError('items', ORDER_VALIDATION.ITEMS_EMPTY)
     }
     const items: OrderItemProps[] = props.items.map((item) => ({
       ...item,
