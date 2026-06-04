@@ -11,7 +11,7 @@ export class CreateMenuDto {
 
   @IsNumber()
   @Min(0)
-  @Max(99_999_999)
+  @Max(999_999)
   price: number
 }
 
@@ -28,7 +28,7 @@ export class UpdateMenuDto {
 
   @IsNumber()
   @Min(0)
-  @Max(99_999_999)
+  @Max(999_999)
   @IsOptional()
   price?: number
 }
