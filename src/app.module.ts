@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { envValidationSchema } from './config/env.validation';
+import { BackupModule } from './database/backup/backup.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BillingModule } from './modules/billing/billing.module';
@@ -32,7 +34,9 @@ import { AppLogger } from './shared/infrastructure/logging/app-logger.service';
         ],
       }),
     }),
+    ScheduleModule.forRoot(),
     DatabaseModule,
+    BackupModule,
     UsersModule,
     AuthModule,
     VenueModule,

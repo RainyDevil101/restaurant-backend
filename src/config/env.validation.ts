@@ -40,4 +40,46 @@ export const envValidationSchema = Joi.object({
   THROTTLE_TTL: Joi.number().integer().min(1000).default(60000),
 
   THROTTLE_LIMIT: Joi.number().integer().min(1).default(100),
+
+  BACKUP_CRON: Joi.string().default('0 12 * * *'),
+
+  BACKUP_TIMEZONE: Joi.string().default('UTC'),
+
+  BACKUP_RETENTION_DAYS: Joi.number().integer().min(1).default(14),
+
+  BACKUP_DIR: Joi.string().default('./backups'),
+
+  BACKUP_DRIVER: Joi.string().valid('local', 's3').default('local'),
+
+  S3_ENDPOINT: Joi.string().when('BACKUP_DRIVER', {
+    is: 's3',
+    then: Joi.required(),
+    otherwise: Joi.optional(),
+  }),
+
+  S3_REGION: Joi.string().when('BACKUP_DRIVER', {
+    is: 's3',
+    then: Joi.required(),
+    otherwise: Joi.optional(),
+  }),
+
+  S3_BUCKET: Joi.string().when('BACKUP_DRIVER', {
+    is: 's3',
+    then: Joi.required(),
+    otherwise: Joi.optional(),
+  }),
+
+  S3_ACCESS_KEY_ID: Joi.string().when('BACKUP_DRIVER', {
+    is: 's3',
+    then: Joi.required(),
+    otherwise: Joi.optional(),
+  }),
+
+  S3_SECRET_ACCESS_KEY: Joi.string().when('BACKUP_DRIVER', {
+    is: 's3',
+    then: Joi.required(),
+    otherwise: Joi.optional(),
+  }),
+
+  S3_PREFIX: Joi.string().allow('').default(''),
 })

@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16
+    container_name: subito-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: subito
+      POSTGRES_PASSWORD: subito
+      POSTGRES_DB: subito
+    ports:
+      - '5432:5432'
+    volumes:
+      - subito-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U subito -d subito']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  subito-db-data:
