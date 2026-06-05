@@ -1,4 +1,25 @@
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator'
+import {
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  ValidateNested,
+} from 'class-validator'
+import { Type } from 'class-transformer'
+
+export class MenuItemDto {
+  @IsString()
+  @IsNotEmpty()
+  productId: string
+
+  @IsInt()
+  @Min(1)
+  quantity: number
+}
 
 export class CreateMenuDto {
   @IsString()
@@ -6,8 +27,9 @@ export class CreateMenuDto {
   name: string
 
   @IsArray()
-  @IsString({ each: true })
-  productIds: string[]
+  @ValidateNested({ each: true })
+  @Type(() => MenuItemDto)
+  items: MenuItemDto[]
 
   @IsNumber()
   @Min(0)
@@ -22,9 +44,10 @@ export class UpdateMenuDto {
   name?: string
 
   @IsArray()
-  @IsString({ each: true })
+  @ValidateNested({ each: true })
+  @Type(() => MenuItemDto)
   @IsOptional()
-  productIds?: string[]
+  items?: MenuItemDto[]
 
   @IsNumber()
   @Min(0)

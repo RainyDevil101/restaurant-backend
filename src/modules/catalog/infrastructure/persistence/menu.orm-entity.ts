@@ -10,7 +10,7 @@ export class MenuOrmEntity {
   name!: string
 
   @Column({ type: 'jsonb' })
-  productIds!: string[]
+  items!: { productId: string; quantity: number }[]
 
   @Column({ type: 'boolean' })
   active!: boolean

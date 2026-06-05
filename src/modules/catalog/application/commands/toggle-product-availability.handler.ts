@@ -23,7 +23,7 @@ export class ToggleProductAvailabilityHandler implements ICommandHandler<ToggleP
 
     if (product.available) {
       const menus = await this.menus.findAll()
-      const referenced = menus.some((menu) => menu.productIds.includes(id))
+      const referenced = menus.some((menu) => menu.items.some((item) => item.productId === id))
       if (referenced) {
         throw new ValidationError('product', PRODUCT_ERROR_MSG.IN_MENUS_DEACTIVATE)
       }

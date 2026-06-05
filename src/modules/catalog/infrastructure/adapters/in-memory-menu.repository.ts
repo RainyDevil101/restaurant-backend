@@ -9,8 +9,25 @@ const AVAILABLE_PRODUCT_IDS = [
 ]
 
 const SEED = [
-  { id: 'menu-1', name: 'Menú principal',    productIds: AVAILABLE_PRODUCT_IDS,                        active: true,  price: 199 },
-  { id: 'menu-2', name: 'Menú de temporada', productIds: ['prod-1', 'prod-4', 'prod-8', 'prod-10'],  active: false, price: 149 },
+  {
+    id: 'menu-1',
+    name: 'Menú principal',
+    items: AVAILABLE_PRODUCT_IDS.map((productId) => ({ productId, quantity: 1 })),
+    active: true,
+    price: 199,
+  },
+  {
+    id: 'menu-2',
+    name: 'Menú de temporada',
+    items: [
+      { productId: 'prod-1', quantity: 1 },
+      { productId: 'prod-4', quantity: 2 },
+      { productId: 'prod-8', quantity: 1 },
+      { productId: 'prod-10', quantity: 1 },
+    ],
+    active: false,
+    price: 149,
+  },
 ]
 
 @Injectable()

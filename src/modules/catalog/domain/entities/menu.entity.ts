@@ -3,23 +3,28 @@ import { ValidationError } from '../../../../shared/domain/errors/validation.err
 import { MENU_VALIDATION } from '../constants/catalog-validation-messages.constants'
 import { definedFields } from '../../../../shared/domain/patch'
 
+export interface MenuItem {
+  productId: string
+  quantity: number
+}
+
 export interface MenuProps {
   name: string
-  productIds: string[]
+  items: MenuItem[]
   active: boolean
   price: number
 }
 
 export class Menu extends Entity {
   readonly name: string
-  readonly productIds: readonly string[]
+  readonly items: readonly MenuItem[]
   readonly active: boolean
   readonly price: number
 
   private constructor(props: MenuProps, id: string) {
     super(id)
     this.name = props.name
-    this.productIds = [...props.productIds]
+    this.items = props.items.map((i) => ({ ...i }))
     this.active = props.active
     this.price = props.price
   }
@@ -30,7 +35,7 @@ export class Menu extends Entity {
     return new Menu({ ...props, name: props.name.trim() }, id)
   }
 
-  update(patch: Partial<Pick<MenuProps, 'name' | 'productIds' | 'price'>>): Menu {
+  update(patch: Partial<Pick<MenuProps, 'name' | 'items' | 'price'>>): Menu {
     return Menu.create({ ...this.toProps(), ...definedFields(patch) }, this.id)
   }
 
@@ -39,6 +44,6 @@ export class Menu extends Entity {
   }
 
   private toProps(): MenuProps {
-    return { name: this.name, productIds: [...this.productIds], active: this.active, price: this.price }
+    return { name: this.name, items: this.items.map((i) => ({ ...i })), active: this.active, price: this.price }
   }
 }

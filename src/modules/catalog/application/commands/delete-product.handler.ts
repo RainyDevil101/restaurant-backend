@@ -21,7 +21,7 @@ export class DeleteProductHandler implements ICommandHandler<DeleteProductComman
     if (!product) throw new NotFoundError(ENTITY_NAME.PRODUCT, id)
 
     const menus = await this.menus.findAll()
-    const referenced = menus.some((menu) => menu.productIds.includes(id))
+    const referenced = menus.some((menu) => menu.items.some((item) => item.productId === id))
     if (referenced) {
       throw new ValidationError('product', PRODUCT_ERROR_MSG.IN_MENUS)
     }
