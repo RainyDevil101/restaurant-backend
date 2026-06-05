@@ -6,6 +6,7 @@ export interface AuthUserDto {
   email: string
   role: UserRole
   active: boolean
+  isOwner: boolean
 }
 
 export class AuthTokenDto {

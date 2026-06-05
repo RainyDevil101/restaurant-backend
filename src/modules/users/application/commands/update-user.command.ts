@@ -4,5 +4,6 @@ export class UpdateUserCommand {
   constructor(
     readonly id: string,
     readonly dto: UpdateUserDto,
+    readonly actorId: string,
   ) {}
 }

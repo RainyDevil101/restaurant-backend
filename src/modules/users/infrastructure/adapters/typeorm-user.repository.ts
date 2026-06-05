@@ -20,6 +20,7 @@ export class TypeormUserRepository implements IUserRepository {
         hashedCredential: row.hashedCredential,
         role: row.role,
         active: row.active,
+        isOwner: row.isOwner ?? false,
       },
       row.id,
     )
@@ -33,6 +34,7 @@ export class TypeormUserRepository implements IUserRepository {
     row.hashedCredential = user.hashedCredential
     row.role = user.role
     row.active = user.active
+    row.isOwner = user.isOwner
     return row
   }
 

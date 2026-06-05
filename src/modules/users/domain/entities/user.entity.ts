@@ -9,6 +9,7 @@ export interface UserProps {
   hashedCredential: string
   role: UserRole
   active: boolean
+  isOwner: boolean
 }
 
 export class User extends Entity {
@@ -17,6 +18,7 @@ export class User extends Entity {
   readonly hashedCredential: string
   readonly role: UserRole
   readonly active: boolean
+  readonly isOwner: boolean
 
   /** Meseros (role M) authenticate with a numeric PIN; others use a password. */
   get isPin(): boolean {
@@ -30,6 +32,7 @@ export class User extends Entity {
     this.hashedCredential = props.hashedCredential
     this.role = props.role
     this.active = props.active
+    this.isOwner = props.isOwner
   }
 
   static create(props: UserProps, id: string): User {
@@ -51,6 +54,7 @@ export class User extends Entity {
       hashedCredential: this.hashedCredential,
       role: this.role,
       active: this.active,
+      isOwner: this.isOwner,
     }
   }
 }

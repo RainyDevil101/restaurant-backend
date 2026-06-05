@@ -17,6 +17,7 @@ export class ListUsersHandler implements IQueryHandler<ListUsersQuery> {
       email: user.email,
       role: user.role,
       active: user.active,
+      isOwner: user.isOwner,
     }))
   }
 }

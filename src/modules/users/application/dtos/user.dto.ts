@@ -6,4 +6,5 @@ export interface UserDto {
   email: string
   role: UserRole
   active: boolean
+  isOwner: boolean
 }

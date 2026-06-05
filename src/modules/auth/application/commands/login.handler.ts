@@ -30,6 +30,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
       email: user.email,
       role: user.role,
       active: user.active,
+      isOwner: user.isOwner,
     })
   }
 }

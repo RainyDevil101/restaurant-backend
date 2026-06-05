@@ -14,6 +14,8 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs'
 import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard'
 import { RolesGuard } from '../../auth/infrastructure/guards/roles.guard'
 import { Roles } from '../../auth/infrastructure/decorators/roles.decorator'
+import { CurrentUser } from '../../auth/infrastructure/decorators/current-user.decorator'
+import type { TokenPayload } from '../../auth/domain/ports/token.service.port'
 import { ROLE } from '../../../shared/constants/roles.constants'
 import { CreateUserCommand } from '../application/commands/create-user.command'
 import { DeactivateUserCommand } from '../application/commands/deactivate-user.command'
@@ -44,14 +46,14 @@ export class UsersController {
 
   @Patch(':id')
   @Roles(ROLE.ADMIN)
-  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-    return this.commandBus.execute(new UpdateUserCommand(id, dto))
+  update(@Param('id') id: string, @Body() dto: UpdateUserDto, @CurrentUser() actor: TokenPayload) {
+    return this.commandBus.execute(new UpdateUserCommand(id, dto, actor.sub))
   }
 
   @Delete(':id')
   @Roles(ROLE.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.commandBus.execute(new DeactivateUserCommand(id))
+  remove(@Param('id') id: string, @CurrentUser() actor: TokenPayload) {
+    return this.commandBus.execute(new DeactivateUserCommand(id, actor.sub))
   }
 }

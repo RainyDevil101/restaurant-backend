@@ -20,4 +20,7 @@ export class UserOrmEntity {
 
   @Column({ type: 'boolean', default: true })
   active!: boolean
+
+  @Column({ type: 'boolean', default: false })
+  isOwner!: boolean
 }

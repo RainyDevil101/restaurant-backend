@@ -24,9 +24,19 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 
     const hashedCredential = await this.passwordService.hash(dto.credential)
     const user = await this.repo.save(
-      User.create({ name: dto.name, email, hashedCredential, role: dto.role, active: true }, randomUUID()),
+      User.create(
+        { name: dto.name, email, hashedCredential, role: dto.role, active: true, isOwner: false },
+        randomUUID(),
+      ),
     )
 
-    return { id: user.id, name: user.name, email: user.email, role: user.role, active: user.active }
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      active: user.active,
+      isOwner: user.isOwner,
+    }
   }
 }
