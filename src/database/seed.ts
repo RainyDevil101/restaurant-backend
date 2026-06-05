@@ -40,10 +40,10 @@ const TABLES = [
 ]
 
 const CATEGORIES = [
-  { id: 'cat-1', name: 'Entradas' },
-  { id: 'cat-2', name: 'Platos fuertes' },
-  { id: 'cat-3', name: 'Bebidas' },
-  { id: 'cat-4', name: 'Postres' },
+  { id: 'cat-1', name: 'Entradas', areaId: 'area-1' },
+  { id: 'cat-2', name: 'Platos fuertes', areaId: 'area-1' },
+  { id: 'cat-3', name: 'Bebidas', areaId: 'area-2' },
+  { id: 'cat-4', name: 'Postres', areaId: 'area-1' },
 ]
 
 const PRODUCTS = [
@@ -172,7 +172,7 @@ async function seed() {
       Table.create({ name: t.name, capacity: t.capacity, status: t.status, areaId: t.areaId }, t.id),
     )
   }
-  for (const c of CATEGORIES) await categoryRepo.save(Category.create({ name: c.name }, c.id))
+  for (const c of CATEGORIES) await categoryRepo.save(Category.create({ name: c.name, areaId: c.areaId }, c.id))
   for (const p of PRODUCTS) {
     await productRepo.save(
       Product.create(

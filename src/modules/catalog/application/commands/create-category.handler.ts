@@ -11,6 +11,6 @@ export class CreateCategoryHandler implements ICommandHandler<CreateCategoryComm
   constructor(@Inject(CATEGORY_REPOSITORY) private readonly repo: ICategoryRepository) {}
 
   execute({ dto }: CreateCategoryCommand): Promise<Category> {
-    return this.repo.save(Category.create({ name: dto.name }, randomUUID()))
+    return this.repo.save(Category.create({ name: dto.name, areaId: dto.areaId }, randomUUID()))
   }
 }

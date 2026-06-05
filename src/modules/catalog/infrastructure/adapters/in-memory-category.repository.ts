@@ -3,10 +3,10 @@ import { Category } from '../../domain/entities/category.entity'
 import type { ICategoryRepository } from '../../domain/ports/category.repository.port'
 
 const SEED = [
-  { id: 'cat-1', name: 'Entradas' },
-  { id: 'cat-2', name: 'Platos fuertes' },
-  { id: 'cat-3', name: 'Bebidas' },
-  { id: 'cat-4', name: 'Postres' },
+  { id: 'cat-1', name: 'Entradas', areaId: 'area-1' },
+  { id: 'cat-2', name: 'Platos fuertes', areaId: 'area-1' },
+  { id: 'cat-3', name: 'Bebidas', areaId: 'area-2' },
+  { id: 'cat-4', name: 'Postres', areaId: 'area-1' },
 ]
 
 @Injectable()

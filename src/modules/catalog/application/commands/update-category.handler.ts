@@ -14,6 +14,6 @@ export class UpdateCategoryHandler implements ICommandHandler<UpdateCategoryComm
   async execute({ id, dto }: UpdateCategoryCommand): Promise<Category> {
     const category = await this.repo.findById(id)
     if (!category) throw new NotFoundError(ENTITY_NAME.CATEGORY, id)
-    return this.repo.update(dto.name ? category.rename(dto.name) : category)
+    return this.repo.update(category.update({ name: dto.name, areaId: dto.areaId }))
   }
 }

@@ -4,6 +4,10 @@ export class CreateCategoryDto {
   @IsString()
   @IsNotEmpty()
   name: string
+
+  @IsString()
+  @IsOptional()
+  areaId?: string
 }
 
 export class UpdateCategoryDto {
@@ -11,4 +15,8 @@ export class UpdateCategoryDto {
   @IsNotEmpty()
   @IsOptional()
   name?: string
+
+  @IsString()
+  @IsOptional()
+  areaId?: string
 }

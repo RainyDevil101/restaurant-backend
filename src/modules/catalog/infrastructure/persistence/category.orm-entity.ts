@@ -8,6 +8,9 @@ export class CategoryOrmEntity {
   @Column({ type: 'varchar' })
   name!: string
 
+  @Column({ type: 'varchar', nullable: true })
+  areaId!: string | null
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date
 
