@@ -9,10 +9,13 @@ import { CancelOrderHandler } from './application/commands/cancel-order.handler'
 import { CreateOrderHandler } from './application/commands/create-order.handler'
 import { UpdateOrderStatusHandler } from './application/commands/update-order-status.handler'
 import { GetOrdersByTableHandler } from './application/queries/get-orders-by-table.handler'
+import { GetComandasHandler } from './application/queries/get-comandas.handler'
 import { ORDER_NOTIFIER } from './domain/ports/order-notifier.port'
 import { ORDER_REPOSITORY } from './domain/ports/order.repository.port'
+import { COMANDA_RENDERER } from './domain/ports/comanda-renderer.port'
 import { OrdersController } from './http/orders.controller'
 import { TypeormOrderRepository } from './infrastructure/adapters/typeorm-order.repository'
+import { EscPosComandaRenderer } from './infrastructure/adapters/escpos-comanda-renderer'
 import { OrderOrmEntity } from './infrastructure/persistence/order.orm-entity'
 import { OrdersGateway } from './infrastructure/realtime/orders.gateway'
 
@@ -24,9 +27,11 @@ import { OrdersGateway } from './infrastructure/realtime/orders.gateway'
     CreateOrderHandler,
     UpdateOrderStatusHandler,
     GetOrdersByTableHandler,
+    GetComandasHandler,
     OrdersGateway,
     { provide: ORDER_REPOSITORY, useClass: TypeormOrderRepository },
     { provide: ORDER_NOTIFIER, useExisting: OrdersGateway },
+    { provide: COMANDA_RENDERER, useClass: EscPosComandaRenderer },
   ],
   exports: [ORDER_REPOSITORY],
 })

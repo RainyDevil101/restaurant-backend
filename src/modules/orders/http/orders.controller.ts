@@ -10,6 +10,7 @@ import { CancelOrderCommand } from '../application/commands/cancel-order.command
 import { CreateOrderCommand } from '../application/commands/create-order.command'
 import { UpdateOrderStatusCommand } from '../application/commands/update-order-status.command'
 import { GetOrdersByTableQuery } from '../application/queries/get-orders-by-table.query'
+import { GetComandasQuery } from '../application/queries/get-comandas.query'
 import { CancelOrderDto, CreateOrderDto, UpdateOrderStatusDto } from '../application/dtos/order.dto'
 
 @Controller('orders')
@@ -28,6 +29,13 @@ export class OrdersController {
   @Get('table/:tableId')
   findByTable(@Param('tableId') tableId: string) {
     return this.queryBus.execute(new GetOrdersByTableQuery(tableId))
+  }
+
+  @Get(':id/comandas')
+  @Roles(ROLE.MESERO, ROLE.CAJERO, ROLE.ADMIN)
+  comandas(@Param('id') id: string, @Query('width') width?: string) {
+    const paperWidth = width === '58' ? 58 : 80
+    return this.queryBus.execute(new GetComandasQuery(id, paperWidth))
   }
 
   @Post()

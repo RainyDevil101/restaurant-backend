@@ -33,6 +33,6 @@ const HANDLERS = [
     { provide: AREA_REPOSITORY, useClass: TypeormAreaRepository },
     { provide: TABLE_REPOSITORY, useClass: TypeormTableRepository },
   ],
-  exports: [TABLE_REPOSITORY],
+  exports: [TABLE_REPOSITORY, AREA_REPOSITORY],
 })
 export class VenueModule {}
