@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common'
 import { CommandBus, QueryBus } from '@nestjs/cqrs'
 import { JwtAuthGuard } from '../../auth/infrastructure/guards/jwt-auth.guard'
 import { RolesGuard } from '../../auth/infrastructure/guards/roles.guard'
@@ -8,6 +8,7 @@ import { ConsolidateBillCommand } from '../application/commands/consolidate-bill
 import { ProcessPaymentCommand } from '../application/commands/process-payment.command'
 import { GetBillByTableQuery } from '../application/queries/get-bill-by-table.query'
 import { GetAllPaymentsQuery } from '../application/queries/get-all-payments.query'
+import { GetPrecheckQuery } from '../application/queries/get-precheck.query'
 import { ProcessPaymentDto } from '../application/dtos/payment.dto'
 
 @Controller('billing')
@@ -28,6 +29,13 @@ export class BillingController {
   @Roles(ROLE.CAJERO, ROLE.ADMIN)
   getBill(@Param('tableId') tableId: string) {
     return this.queryBus.execute(new GetBillByTableQuery(tableId))
+  }
+
+  @Get('table/:tableId/precheck')
+  @Roles(ROLE.CAJERO, ROLE.ADMIN)
+  precheck(@Param('tableId') tableId: string, @Query('width') width?: string) {
+    const paperWidth = width === '58' ? 58 : 80
+    return this.queryBus.execute(new GetPrecheckQuery(tableId, paperWidth))
   }
 
   @Post('table/:tableId/consolidate')

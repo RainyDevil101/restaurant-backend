@@ -33,5 +33,6 @@ const HANDLERS = [
     { provide: PRINTER_REPOSITORY, useClass: TypeormPrinterRepository },
     { provide: RECEIPT_SETTINGS_REPOSITORY, useClass: TypeormReceiptSettingsRepository },
   ],
+  exports: [RECEIPT_SETTINGS_REPOSITORY],
 })
 export class SettingsModule {}
