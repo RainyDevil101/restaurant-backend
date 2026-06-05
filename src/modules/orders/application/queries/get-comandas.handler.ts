@@ -11,10 +11,10 @@ import {
   type IComandaRenderer,
   type ComandaLine,
 } from '../../domain/ports/comanda-renderer.port'
+import { ORDER_ENTITY_NAME } from '../constants/order-error-messages.constants'
+import { ORDER_LABELS } from '../constants/order-labels.constants'
+import { PAPER_COLUMNS } from '../../../settings/domain/constants/paper-width.constants'
 import { GetComandasQuery } from './get-comandas.query'
-
-const ORDER_ENTITY_NAME = 'Pedido'
-const GENERAL_AREA = 'General'
 
 export interface ComandaDto {
   areaId: string | null
@@ -54,13 +54,13 @@ export class GetComandasHandler implements IQueryHandler<GetComandasQuery> {
       const category = product ? categoryById.get(product.categoryId) : undefined
       const areaId = category?.areaId ?? null
       const key = areaId ?? '__general__'
-      const areaName = areaId ? (areaById.get(areaId)?.name ?? GENERAL_AREA) : GENERAL_AREA
+      const areaName = areaId ? (areaById.get(areaId)?.name ?? ORDER_LABELS.GENERAL_AREA) : ORDER_LABELS.GENERAL_AREA
       const group = groups.get(key) ?? { areaId, areaName, lines: [] }
       group.lines.push({ quantity: item.quantity, name: item.productName, notes: item.notes })
       groups.set(key, group)
     }
 
-    const columns = paperWidth === 58 ? 32 : 48
+    const columns = PAPER_COLUMNS[paperWidth]
     const tableName = table?.name ?? order.tableId
     const dateTime = new Date()
 

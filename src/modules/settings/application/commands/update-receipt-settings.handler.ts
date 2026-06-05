@@ -8,6 +8,7 @@ import {
   RECEIPT_SETTINGS_REPOSITORY,
   type IReceiptSettingsRepository,
 } from '../../domain/ports/receipt-settings.repository.port'
+import { RECEIPT_DEFAULTS } from '../constants/settings-messages.constants'
 import { UpdateReceiptSettingsCommand } from './update-receipt-settings.command'
 
 @CommandHandler(UpdateReceiptSettingsCommand)
@@ -24,9 +25,9 @@ export class UpdateReceiptSettingsHandler
       (await this.repo.get()) ??
       ReceiptSettings.create(
         {
-          businessName: 'La Fragua del Diablo',
-          address: '',
-          footer: 'PRECUENTA · No válido como boleta',
+          businessName: RECEIPT_DEFAULTS.BUSINESS_NAME,
+          address: RECEIPT_DEFAULTS.ADDRESS,
+          footer: RECEIPT_DEFAULTS.FOOTER,
         },
         RECEIPT_SETTINGS_ID,
       )

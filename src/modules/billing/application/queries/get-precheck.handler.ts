@@ -14,16 +14,13 @@ import {
   type ReceiptLine,
   type RenderedReceipt,
 } from '../../domain/ports/receipt-renderer.port'
+import { RECEIPT_DEFAULTS } from '../../../settings/application/constants/settings-messages.constants'
+import { PAPER_COLUMNS } from '../../../settings/domain/constants/paper-width.constants'
+import { BILL_ERROR } from '../constants/billing-error-messages.constants'
 import { GetPrecheckQuery } from './get-precheck.query'
 
 export interface PrecheckDto extends RenderedReceipt {
   paperWidth: number
-}
-
-const RECEIPT_DEFAULTS = {
-  businessName: 'La Fragua del Diablo',
-  address: '',
-  footer: 'PRECUENTA · No válido como boleta',
 }
 
 @QueryHandler(GetPrecheckQuery)
@@ -41,7 +38,7 @@ export class GetPrecheckHandler implements IQueryHandler<GetPrecheckQuery> {
       (order) => order.status.value !== ORDER_STATUS.CANCELLED && !order.paid,
     )
     if (orders.length === 0) {
-      throw new ValidationError('orders', 'No hay pedidos activos en la mesa para la precuenta')
+      throw new ValidationError('orders', BILL_ERROR.NO_ACTIVE_ORDERS)
     }
 
     const itemMap = new Map<string, ReceiptLine>()
@@ -66,12 +63,12 @@ export class GetPrecheckHandler implements IQueryHandler<GetPrecheckQuery> {
 
     const table = await this.tableRepo.findById(tableId)
     const settings = await this.receiptRepo.get()
-    const columns = paperWidth === 58 ? 32 : 48
+    const columns = PAPER_COLUMNS[paperWidth]
 
     const rendered = this.renderer.render({
-      businessName: settings?.businessName ?? RECEIPT_DEFAULTS.businessName,
-      address: settings?.address ?? RECEIPT_DEFAULTS.address,
-      footer: settings?.footer ?? RECEIPT_DEFAULTS.footer,
+      businessName: settings?.businessName ?? RECEIPT_DEFAULTS.BUSINESS_NAME,
+      address: settings?.address ?? RECEIPT_DEFAULTS.ADDRESS,
+      footer: settings?.footer ?? RECEIPT_DEFAULTS.FOOTER,
       tableName: table?.name ?? tableId,
       dateTime: new Date(),
       lines,

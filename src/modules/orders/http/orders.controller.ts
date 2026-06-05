@@ -11,6 +11,7 @@ import { CreateOrderCommand } from '../application/commands/create-order.command
 import { UpdateOrderStatusCommand } from '../application/commands/update-order-status.command'
 import { GetOrdersByTableQuery } from '../application/queries/get-orders-by-table.query'
 import { GetComandasQuery } from '../application/queries/get-comandas.query'
+import { PAPER_WIDTH } from '../../settings/domain/constants/paper-width.constants'
 import { CancelOrderDto, CreateOrderDto, UpdateOrderStatusDto } from '../application/dtos/order.dto'
 
 @Controller('orders')
@@ -34,7 +35,7 @@ export class OrdersController {
   @Get(':id/comandas')
   @Roles(ROLE.MESERO, ROLE.CAJERO, ROLE.ADMIN)
   comandas(@Param('id') id: string, @Query('width') width?: string) {
-    const paperWidth = width === '58' ? 58 : 80
+    const paperWidth = width === '58' ? PAPER_WIDTH.MM_58 : PAPER_WIDTH.MM_80
     return this.queryBus.execute(new GetComandasQuery(id, paperWidth))
   }
 

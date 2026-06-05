@@ -8,6 +8,7 @@ import type {
 const ESC = 0x1b
 const GS = 0x1d
 const LF = 0x0a
+const COMANDA_TITLE = 'COMANDA'
 
 @Injectable()
 export class EscPosComandaRenderer implements IComandaRenderer {
@@ -21,7 +22,7 @@ export class EscPosComandaRenderer implements IComandaRenderer {
   private layout(ticket: ComandaTicket): string[] {
     const w = ticket.columns
     const out: string[] = []
-    out.push(...this.center('COMANDA', w))
+    out.push(...this.center(COMANDA_TITLE, w))
     out.push(...this.center(ticket.areaName, w))
     out.push('-'.repeat(w))
     out.push(this.pad(`Mesa: ${ticket.tableName}`, this.dateLabel(ticket.dateTime), w))
@@ -77,7 +78,7 @@ export class EscPosComandaRenderer implements IComandaRenderer {
     bytes.push(ESC, 0x40)
     bytes.push(ESC, 0x61, 0x01)
     bytes.push(GS, 0x21, 0x11)
-    write('COMANDA')
+    write(COMANDA_TITLE)
     feed()
     bytes.push(GS, 0x21, 0x00)
     bytes.push(ESC, 0x45, 0x01)

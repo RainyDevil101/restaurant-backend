@@ -9,6 +9,7 @@ import { ProcessPaymentCommand } from '../application/commands/process-payment.c
 import { GetBillByTableQuery } from '../application/queries/get-bill-by-table.query'
 import { GetAllPaymentsQuery } from '../application/queries/get-all-payments.query'
 import { GetPrecheckQuery } from '../application/queries/get-precheck.query'
+import { PAPER_WIDTH } from '../../settings/domain/constants/paper-width.constants'
 import { ProcessPaymentDto } from '../application/dtos/payment.dto'
 
 @Controller('billing')
@@ -34,7 +35,7 @@ export class BillingController {
   @Get('table/:tableId/precheck')
   @Roles(ROLE.CAJERO, ROLE.ADMIN)
   precheck(@Param('tableId') tableId: string, @Query('width') width?: string) {
-    const paperWidth = width === '58' ? 58 : 80
+    const paperWidth = width === '58' ? PAPER_WIDTH.MM_58 : PAPER_WIDTH.MM_80
     return this.queryBus.execute(new GetPrecheckQuery(tableId, paperWidth))
   }
 
