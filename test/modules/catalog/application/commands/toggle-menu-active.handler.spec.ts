@@ -20,7 +20,7 @@ describe('ToggleMenuActiveHandler', () => {
   })
 
   it('activates an inactive menu and persists it', async () => {
-    repo.findById.mockResolvedValue(Menu.create({ name: 'Menu', productIds: [], active: false, price: 100 }, 'menu-1'))
+    repo.findById.mockResolvedValue(Menu.create({ name: 'Menu', items: [], active: false, price: 100 }, 'menu-1'))
     repo.update.mockImplementation((menu) => Promise.resolve(menu))
 
     const result = await handler.execute(new ToggleMenuActiveCommand('menu-1'))
@@ -33,7 +33,7 @@ describe('ToggleMenuActiveHandler', () => {
   })
 
   it('deactivates an active menu and persists it', async () => {
-    repo.findById.mockResolvedValue(Menu.create({ name: 'Menu', productIds: [], active: true, price: 100 }, 'menu-1'))
+    repo.findById.mockResolvedValue(Menu.create({ name: 'Menu', items: [], active: true, price: 100 }, 'menu-1'))
     repo.update.mockImplementation((menu) => Promise.resolve(menu))
 
     await handler.execute(new ToggleMenuActiveCommand('menu-1'))

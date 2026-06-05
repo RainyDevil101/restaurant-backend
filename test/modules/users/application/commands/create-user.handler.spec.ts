@@ -51,6 +51,7 @@ describe('CreateUserHandler', () => {
       email: 'ana@subito.mx',
       role: ROLE.MESERO,
       active: true,
+      isOwner: false,
     })
   })
 
@@ -79,7 +80,7 @@ describe('CreateUserHandler', () => {
   it('throws ValidationError when the email already exists', async () => {
     repo.findByEmail.mockResolvedValue(
       User.create(
-        { name: 'Existing', email: 'ana@subito.mx', hashedCredential: 'x', role: ROLE.MESERO, active: true },
+        { name: 'Existing', email: 'ana@subito.mx', hashedCredential: 'x', role: ROLE.MESERO, active: true, isOwner: false },
         'user-1',
       ),
     )

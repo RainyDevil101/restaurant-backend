@@ -21,6 +21,7 @@ describe('UpdateUserHandler', () => {
         hashedCredential: 'old-hash',
         role: ROLE.MESERO,
         active: true,
+        isOwner: false,
       },
       'user-1',
     )
@@ -40,8 +41,8 @@ describe('UpdateUserHandler', () => {
     handler = new UpdateUserHandler(repo, passwordService)
   })
 
-  const dispatch = (dto: UpdateUserDto, id = 'user-1') =>
-    handler.execute(new UpdateUserCommand(id, dto))
+  const dispatch = (dto: UpdateUserDto, id = 'user-1', actorId = 'admin-1') =>
+    handler.execute(new UpdateUserCommand(id, dto, actorId))
 
   it('throws NotFoundError when the user does not exist', async () => {
     repo.findById.mockResolvedValue(null)
@@ -120,7 +121,7 @@ describe('UpdateUserHandler', () => {
     repo.findById.mockResolvedValue(existingUser())
     repo.findByEmail.mockResolvedValue(
       User.create(
-        { name: 'Other', email: 'taken@subito.mx', hashedCredential: 'x', role: ROLE.CAJERO, active: true },
+        { name: 'Other', email: 'taken@subito.mx', hashedCredential: 'x', role: ROLE.CAJERO, active: true, isOwner: false },
         'user-2',
       ),
     )
@@ -141,6 +142,7 @@ describe('UpdateUserHandler', () => {
       email: 'ana@subito.mx',
       role: ROLE.ADMIN,
       active: false,
+      isOwner: false,
     })
   })
 })

@@ -36,6 +36,7 @@ const adminUser = (overrides: Partial<{ active: boolean; role: (typeof ROLE)[key
       hashedCredential: 'stored-hash',
       role: overrides.role ?? ROLE.ADMIN,
       active: overrides.active ?? true,
+      isOwner: false,
     },
     'admin-1',
   )

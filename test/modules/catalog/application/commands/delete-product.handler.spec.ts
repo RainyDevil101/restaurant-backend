@@ -57,7 +57,7 @@ describe('DeleteProductHandler', () => {
   it('throws ValidationError and does not delete when the product is referenced by a menu', async () => {
     products.findById.mockResolvedValue(existing)
     menus.findAll.mockResolvedValue([
-      Menu.create({ name: 'Combo del día', productIds: ['prod-1'], active: true }, 'menu-1'),
+      Menu.create({ name: 'Combo del día', items: [{ productId: 'prod-1', quantity: 1 }], active: true, price: 100 }, 'menu-1'),
     ])
 
     await expect(handler.execute(new DeleteProductCommand('prod-1'))).rejects.toThrow(ValidationError)

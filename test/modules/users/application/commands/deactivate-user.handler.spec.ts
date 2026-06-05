@@ -11,7 +11,7 @@ describe('DeactivateUserHandler', () => {
 
   const activeUser = () =>
     User.create(
-      { name: 'Ana', email: 'ana@subito.mx', hashedCredential: 'hash', role: ROLE.MESERO, active: true },
+      { name: 'Ana', email: 'ana@subito.mx', hashedCredential: 'hash', role: ROLE.MESERO, active: true, isOwner: false },
       'user-1',
     )
 
@@ -29,7 +29,7 @@ describe('DeactivateUserHandler', () => {
   it('throws NotFoundError when the user does not exist', async () => {
     repo.findById.mockResolvedValue(null)
 
-    await expect(handler.execute(new DeactivateUserCommand('missing'))).rejects.toThrow(NotFoundError)
+    await expect(handler.execute(new DeactivateUserCommand('missing', 'admin-1'))).rejects.toThrow(NotFoundError)
     expect(repo.update).not.toHaveBeenCalled()
   })
 
@@ -37,7 +37,7 @@ describe('DeactivateUserHandler', () => {
     repo.findById.mockResolvedValue(activeUser())
     repo.update.mockImplementation((user) => Promise.resolve(user))
 
-    await handler.execute(new DeactivateUserCommand('user-1'))
+    await handler.execute(new DeactivateUserCommand('user-1', 'admin-1'))
 
     const persisted = repo.update.mock.calls[0]![0] as User
     expect(persisted.id).toBe('user-1')
@@ -48,7 +48,7 @@ describe('DeactivateUserHandler', () => {
     repo.findById.mockResolvedValue(activeUser())
     repo.update.mockImplementation((user) => Promise.resolve(user))
 
-    await handler.execute(new DeactivateUserCommand('user-1'))
+    await handler.execute(new DeactivateUserCommand('user-1', 'admin-1'))
 
     expect(repo.update).toHaveBeenCalledTimes(1)
     const persisted = repo.update.mock.calls[0]![0] as User

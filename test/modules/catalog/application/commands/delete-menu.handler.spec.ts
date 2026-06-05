@@ -20,7 +20,7 @@ describe('DeleteMenuHandler', () => {
   })
 
   it('deletes the menu by id when it exists', async () => {
-    repo.findById.mockResolvedValue(Menu.create({ name: 'Menu', productIds: [], active: false, price: 100 }, 'menu-1'))
+    repo.findById.mockResolvedValue(Menu.create({ name: 'Menu', items: [], active: false, price: 100 }, 'menu-1'))
     repo.delete.mockResolvedValue(undefined)
 
     await handler.execute(new DeleteMenuCommand('menu-1'))

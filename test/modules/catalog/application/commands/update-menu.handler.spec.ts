@@ -20,18 +20,30 @@ describe('UpdateMenuHandler', () => {
   })
 
   it('applies the patch to the existing menu and persists it', async () => {
-    repo.findById.mockResolvedValue(Menu.create({ name: 'Old', productIds: ['prod-1'], active: true, price: 100 }, 'menu-1'))
+    repo.findById.mockResolvedValue(
+      Menu.create({ name: 'Old', items: [{ productId: 'prod-1', quantity: 1 }], active: true, price: 100 }, 'menu-1'),
+    )
     repo.update.mockImplementation((menu) => Promise.resolve(menu))
 
     const result = await handler.execute(
-      new UpdateMenuCommand('menu-1', { name: 'New', productIds: ['prod-2', 'prod-3'], price: 250 }),
+      new UpdateMenuCommand('menu-1', {
+        name: 'New',
+        items: [
+          { productId: 'prod-2', quantity: 1 },
+          { productId: 'prod-3', quantity: 1 },
+        ],
+        price: 250,
+      }),
     )
 
     expect(repo.findById).toHaveBeenCalledWith('menu-1')
     expect(repo.update).toHaveBeenCalledTimes(1)
     const updated = repo.update.mock.calls[0][0]
     expect(updated.name).toBe('New')
-    expect(updated.productIds).toEqual(['prod-2', 'prod-3'])
+    expect(updated.items).toEqual([
+      { productId: 'prod-2', quantity: 1 },
+      { productId: 'prod-3', quantity: 1 },
+    ])
     expect(updated.price).toBe(250)
     expect(updated.active).toBe(true)
     expect(updated.id).toBe('menu-1')
@@ -39,14 +51,16 @@ describe('UpdateMenuHandler', () => {
   })
 
   it('keeps untouched fields when the patch is partial', async () => {
-    repo.findById.mockResolvedValue(Menu.create({ name: 'Old', productIds: ['prod-1'], active: true, price: 100 }, 'menu-1'))
+    repo.findById.mockResolvedValue(
+      Menu.create({ name: 'Old', items: [{ productId: 'prod-1', quantity: 1 }], active: true, price: 100 }, 'menu-1'),
+    )
     repo.update.mockImplementation((menu) => Promise.resolve(menu))
 
     await handler.execute(new UpdateMenuCommand('menu-1', { name: 'Renamed' }))
 
     const updated = repo.update.mock.calls[0][0]
     expect(updated.name).toBe('Renamed')
-    expect(updated.productIds).toEqual(['prod-1'])
+    expect(updated.items).toEqual([{ productId: 'prod-1', quantity: 1 }])
   })
 
   it('throws NotFoundError when the menu does not exist', async () => {

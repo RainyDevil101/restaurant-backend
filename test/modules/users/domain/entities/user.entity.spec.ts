@@ -8,6 +8,7 @@ describe('User', () => {
     hashedCredential: 'hashed-credential',
     role: ROLE.MESERO,
     active: true,
+    isOwner: false,
     ...overrides,
   })
 

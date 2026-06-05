@@ -20,7 +20,7 @@ describe('GetBillByTableHandler', () => {
 
   it('returns the bill found for the table', async () => {
     const bill = Bill.create(
-      { tableId: 'table-1', items: [], total: 0, createdAt: new Date() },
+      { tableId: 'table-1', items: [], total: 0, waiterIds: [], createdAt: new Date() },
       'bill-1',
     )
     repo.findByTable.mockResolvedValue(bill)

@@ -39,7 +39,7 @@ describe('ConsolidateBillHandler', () => {
 
   it('returns the existing unpaid bill without rebuilding it', async () => {
     const existing = Bill.create(
-      { tableId: 'table-1', items: [], total: 0, createdAt: new Date() },
+      { tableId: 'table-1', items: [], total: 0, waiterIds: [], createdAt: new Date() },
       'bill-1',
     )
     billRepo.findByTable.mockResolvedValue(existing)
@@ -53,7 +53,7 @@ describe('ConsolidateBillHandler', () => {
 
   it('builds a new bill from the delivered orders when the existing bill is already paid', async () => {
     const paid = Bill.create(
-      { tableId: 'table-1', items: [], total: 0, createdAt: new Date() },
+      { tableId: 'table-1', items: [], total: 0, waiterIds: [], createdAt: new Date() },
       'bill-old',
     )
     paid.markPaid()
@@ -147,6 +147,7 @@ describe('ConsolidateBillHandler', () => {
     expect(billRepo.save).toHaveBeenCalledTimes(1)
     expect(billRepo.save).toHaveBeenCalledWith(result)
     expect(result.tableId).toBe('table-1')
+    expect(result.waiterIds).toEqual(['user-1'])
   })
 
   it('throws ValidationError when the table has no delivered orders', async () => {

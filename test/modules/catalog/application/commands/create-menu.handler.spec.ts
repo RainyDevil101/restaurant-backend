@@ -22,14 +22,24 @@ describe('CreateMenuHandler', () => {
     repo.save.mockImplementation((menu) => Promise.resolve(menu))
 
     const result = await handler.execute(
-      new CreateMenuCommand({ name: 'Menu del dia', productIds: ['prod-1', 'prod-2'], price: 175 }),
+      new CreateMenuCommand({
+        name: 'Menu del dia',
+        items: [
+          { productId: 'prod-1', quantity: 1 },
+          { productId: 'prod-2', quantity: 1 },
+        ],
+        price: 175,
+      }),
     )
 
     expect(repo.save).toHaveBeenCalledTimes(1)
     const saved = repo.save.mock.calls[0][0]
     expect(saved).toBeInstanceOf(Menu)
     expect(saved.name).toBe('Menu del dia')
-    expect(saved.productIds).toEqual(['prod-1', 'prod-2'])
+    expect(saved.items).toEqual([
+      { productId: 'prod-1', quantity: 1 },
+      { productId: 'prod-2', quantity: 1 },
+    ])
     expect(saved.price).toBe(175)
     expect(saved.active).toBe(false)
     expect(saved.id).toEqual(expect.any(String))

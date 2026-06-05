@@ -14,7 +14,7 @@ describe('Bill', () => {
     it('exposes the provided table, total and timestamp', () => {
       const createdAt = new Date('2026-06-03T12:00:00Z')
       const bill = Bill.create(
-        { tableId: 'table-1', items: [buildItem()], total: 100, createdAt },
+        { tableId: 'table-1', items: [buildItem()], total: 100, waiterIds: [], createdAt },
         'bill-1',
       )
 
@@ -26,7 +26,7 @@ describe('Bill', () => {
 
     it('starts unpaid regardless of the input', () => {
       const bill = Bill.create(
-        { tableId: 'table-1', items: [buildItem()], total: 100, createdAt: new Date() },
+        { tableId: 'table-1', items: [buildItem()], total: 100, waiterIds: [], createdAt: new Date() },
         'bill-1',
       )
 
@@ -36,7 +36,7 @@ describe('Bill', () => {
     it('copies the items so the original array cannot mutate the bill', () => {
       const items = [buildItem()]
       const bill = Bill.create(
-        { tableId: 'table-1', items, total: 100, createdAt: new Date() },
+        { tableId: 'table-1', items, total: 100, waiterIds: [], createdAt: new Date() },
         'bill-1',
       )
 
@@ -47,7 +47,7 @@ describe('Bill', () => {
 
     it('freezes the items collection against mutation', () => {
       const bill = Bill.create(
-        { tableId: 'table-1', items: [buildItem()], total: 100, createdAt: new Date() },
+        { tableId: 'table-1', items: [buildItem()], total: 100, waiterIds: [], createdAt: new Date() },
         'bill-1',
       )
 
@@ -57,7 +57,7 @@ describe('Bill', () => {
     it('preserves every item and its fields', () => {
       const items = [buildItem(), buildItem({ productId: 'prod-2', subtotal: 200 })]
       const bill = Bill.create(
-        { tableId: 'table-1', items, total: 300, createdAt: new Date() },
+        { tableId: 'table-1', items, total: 300, waiterIds: [], createdAt: new Date() },
         'bill-1',
       )
 
@@ -70,7 +70,7 @@ describe('Bill', () => {
   describe('markPaid', () => {
     it('flips the paid flag to true', () => {
       const bill = Bill.create(
-        { tableId: 'table-1', items: [buildItem()], total: 100, createdAt: new Date() },
+        { tableId: 'table-1', items: [buildItem()], total: 100, waiterIds: [], createdAt: new Date() },
         'bill-1',
       )
 
@@ -81,7 +81,7 @@ describe('Bill', () => {
 
     it('is idempotent when called repeatedly', () => {
       const bill = Bill.create(
-        { tableId: 'table-1', items: [buildItem()], total: 100, createdAt: new Date() },
+        { tableId: 'table-1', items: [buildItem()], total: 100, waiterIds: [], createdAt: new Date() },
         'bill-1',
       )
 
@@ -94,7 +94,7 @@ describe('Bill', () => {
 
   describe('equals', () => {
     it('is true for bills sharing the same id', () => {
-      const props = { tableId: 'table-1', items: [buildItem()], total: 100, createdAt: new Date() }
+      const props = { tableId: 'table-1', items: [buildItem()], total: 100, waiterIds: [], createdAt: new Date() }
       const a = Bill.create(props, 'bill-1')
       const b = Bill.create(props, 'bill-1')
 
@@ -102,7 +102,7 @@ describe('Bill', () => {
     })
 
     it('is false for bills with different ids', () => {
-      const props = { tableId: 'table-1', items: [buildItem()], total: 100, createdAt: new Date() }
+      const props = { tableId: 'table-1', items: [buildItem()], total: 100, waiterIds: [], createdAt: new Date() }
       const a = Bill.create(props, 'bill-1')
       const b = Bill.create(props, 'bill-2')
 

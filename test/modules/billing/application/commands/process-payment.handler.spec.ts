@@ -14,7 +14,7 @@ import { NotFoundError } from '@src/shared/domain/errors/not-found.error'
 import { ValidationError } from '@src/shared/domain/errors/validation.error'
 
 const buildBill = (total: number): Bill =>
-  Bill.create({ tableId: 'table-1', items: [], total, createdAt: new Date() }, 'bill-1')
+  Bill.create({ tableId: 'table-1', items: [], total, waiterIds: [], createdAt: new Date() }, 'bill-1')
 
 const buildDeliveredOrder = (id: string): Order =>
   Order.create(

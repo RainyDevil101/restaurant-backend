@@ -22,6 +22,7 @@ describe('LoginHandler', () => {
         hashedCredential: 'stored-hash',
         role: ROLE.MESERO,
         active: overrides.active ?? true,
+        isOwner: false,
       },
       'user-1',
     )
@@ -66,6 +67,7 @@ describe('LoginHandler', () => {
       email: 'ana@subito.mx',
       role: ROLE.MESERO,
       active: true,
+      isOwner: false,
     })
   })
 
