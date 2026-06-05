@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { Menu } from '../../domain/entities/menu.entity'
+import { Menu, type MenuItem } from '../../domain/entities/menu.entity'
 import type { IMenuRepository } from '../../domain/ports/menu.repository.port'
 import { MenuOrmEntity } from '../persistence/menu.orm-entity'
 
@@ -14,8 +14,17 @@ export class TypeormMenuRepository implements IMenuRepository {
 
   private toDomain(row: MenuOrmEntity): Menu {
     return Menu.create(
-      { name: row.name, items: row.items ?? [], active: row.active, price: row.price },
+      { name: row.name, items: this.normalizeItems(row.items), active: row.active, price: row.price },
       row.id,
+    )
+  }
+
+  private normalizeItems(raw: MenuOrmEntity['items']): MenuItem[] {
+    if (!raw) return []
+    return raw.map((item) =>
+      typeof item === 'string'
+        ? { productId: item, quantity: 1 }
+        : { productId: item.productId, quantity: item.quantity },
     )
   }
 
