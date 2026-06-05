@@ -63,6 +63,6 @@ export class TypeormPrinterRepository implements IPrinterRepository {
   }
 
   async clearDefaults(): Promise<void> {
-    await this.repo.update({}, { isDefault: false })
+    await this.repo.update({ isDefault: true }, { isDefault: false })
   }
 }
