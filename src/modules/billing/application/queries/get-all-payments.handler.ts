@@ -1,22 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { QueryHandler, type IQueryHandler } from '@nestjs/cqrs'
-import type { BillItemProps } from '../../domain/entities/bill.entity'
-import type { PaymentMethodValue } from '../../domain/entities/payment.entity'
 import { BILL_REPOSITORY, type IBillRepository } from '../../domain/ports/bill.repository.port'
 import { PAYMENT_REPOSITORY, type IPaymentRepository } from '../../domain/ports/payment.repository.port'
+import type { PaymentWithItemsDto } from '../dtos/payment.dto'
 import { GetAllPaymentsQuery } from './get-all-payments.query'
-
-export interface PaymentWithItemsDto {
-  id: string
-  billId: string
-  tableId: string
-  amount: number
-  method: PaymentMethodValue
-  change: number
-  paidAt: Date
-  items: BillItemProps[]
-  waiterIds: string[]
-}
 
 @QueryHandler(GetAllPaymentsQuery)
 @Injectable()

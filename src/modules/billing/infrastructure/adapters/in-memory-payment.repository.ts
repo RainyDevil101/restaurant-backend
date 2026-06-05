@@ -5,7 +5,7 @@ import type { IPaymentRepository } from '../../domain/ports/payment.repository.p
 @Injectable()
 export class InMemoryPaymentRepository implements IPaymentRepository {
   private readonly store = new Map<string, Payment>()
-  private readonly byBill = new Map<string, string>() // billId → paymentId
+  private readonly byBill = new Map<string, string>()
 
   async save(payment: Payment): Promise<Payment> {
     this.store.set(payment.id, payment)

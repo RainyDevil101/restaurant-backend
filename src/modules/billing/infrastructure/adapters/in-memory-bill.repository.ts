@@ -5,7 +5,7 @@ import type { IBillRepository } from '../../domain/ports/bill.repository.port'
 @Injectable()
 export class InMemoryBillRepository implements IBillRepository {
   private readonly store = new Map<string, Bill>()
-  private readonly byTable = new Map<string, string>() // tableId → billId
+  private readonly byTable = new Map<string, string>()
 
   async findByTable(tableId: string): Promise<Bill | null> {
     const billId = this.byTable.get(tableId)
