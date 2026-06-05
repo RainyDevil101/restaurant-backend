@@ -11,6 +11,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { SettingsModule } from './modules/settings/settings.module';
 import { UsersModule } from './modules/users/users.module';
 import { VenueModule } from './modules/venue/venue.module';
 import { DomainExceptionFilter } from './shared/infrastructure/exceptions/domain-exception.filter';
@@ -44,6 +45,7 @@ import { AppLogger } from './shared/infrastructure/logging/app-logger.service';
     CatalogModule,
     OrdersModule,
     BillingModule,
+    SettingsModule,
   ],
   providers: [
     AppLogger,
