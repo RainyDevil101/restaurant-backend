@@ -19,9 +19,8 @@ import { WS_EVENT, WS_NAMESPACE, WS_ROOM } from './ws-events.constants'
 })
 export class OrdersGateway implements IOrderNotifier {
   @WebSocketServer()
-  private server: Server
+  private server!: Server
 
-  /** Cashier client calls this once to subscribe to all order events. */
   @SubscribeMessage(WS_EVENT.JOIN_CHECKOUT)
   async handleJoinCheckout(
     @ConnectedSocket() client: Socket,
