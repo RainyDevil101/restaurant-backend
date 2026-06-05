@@ -17,4 +17,10 @@ export class InMemoryPaymentRepository implements IPaymentRepository {
     const paymentId = this.byBill.get(billId)
     return paymentId ? (this.store.get(paymentId) ?? null) : null
   }
+
+  async findAll(): Promise<Payment[]> {
+    return Array.from(this.store.values()).sort(
+      (a, b) => b.paidAt.getTime() - a.paidAt.getTime(),
+    )
+  }
 }

@@ -7,6 +7,7 @@ import { ROLE } from '../../../shared/constants/roles.constants'
 import { ConsolidateBillCommand } from '../application/commands/consolidate-bill.command'
 import { ProcessPaymentCommand } from '../application/commands/process-payment.command'
 import { GetBillByTableQuery } from '../application/queries/get-bill-by-table.query'
+import { GetAllPaymentsQuery } from '../application/queries/get-all-payments.query'
 import { ProcessPaymentDto } from '../application/dtos/payment.dto'
 
 @Controller('billing')
@@ -16,6 +17,12 @@ export class BillingController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
+
+  @Get('payments')
+  @Roles(ROLE.ADMIN)
+  getAllPayments() {
+    return this.queryBus.execute(new GetAllPaymentsQuery())
+  }
 
   @Get('table/:tableId')
   @Roles(ROLE.CAJERO, ROLE.ADMIN)

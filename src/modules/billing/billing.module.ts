@@ -7,6 +7,7 @@ import { VenueModule } from '../venue/venue.module'
 import { ConsolidateBillHandler } from './application/commands/consolidate-bill.handler'
 import { ProcessPaymentHandler } from './application/commands/process-payment.handler'
 import { GetBillByTableHandler } from './application/queries/get-bill-by-table.handler'
+import { GetAllPaymentsHandler } from './application/queries/get-all-payments.handler'
 import { BILL_REPOSITORY } from './domain/ports/bill.repository.port'
 import { PAYMENT_REPOSITORY } from './domain/ports/payment.repository.port'
 import { BillingController } from './http/billing.controller'
@@ -28,6 +29,7 @@ import { PaymentOrmEntity } from './infrastructure/persistence/payment.orm-entit
     ConsolidateBillHandler,
     ProcessPaymentHandler,
     GetBillByTableHandler,
+    GetAllPaymentsHandler,
     { provide: BILL_REPOSITORY, useClass: TypeormBillRepository },
     { provide: PAYMENT_REPOSITORY, useClass: TypeormPaymentRepository },
   ],
