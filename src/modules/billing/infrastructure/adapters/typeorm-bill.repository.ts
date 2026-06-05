@@ -14,7 +14,13 @@ export class TypeormBillRepository implements IBillRepository {
 
   private toDomain(row: BillOrmEntity): Bill {
     const bill = Bill.create(
-      { tableId: row.tableId, items: row.items, total: row.total, createdAt: row.createdAt },
+      {
+        tableId: row.tableId,
+        items: row.items,
+        total: row.total,
+        waiterIds: row.waiterIds ?? [],
+        createdAt: row.createdAt,
+      },
       row.id,
     )
     if (row.paid) bill.markPaid()
@@ -26,6 +32,7 @@ export class TypeormBillRepository implements IBillRepository {
     row.id = bill.id
     row.tableId = bill.tableId
     row.items = [...bill.items]
+    row.waiterIds = [...bill.waiterIds]
     row.total = bill.total
     row.createdAt = bill.createdAt
     row.paid = bill.paid

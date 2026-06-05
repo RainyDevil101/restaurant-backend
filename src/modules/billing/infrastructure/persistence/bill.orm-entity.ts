@@ -13,6 +13,9 @@ export class BillOrmEntity {
   @Column({ type: 'jsonb' })
   items!: BillItemProps[]
 
+  @Column({ type: 'jsonb', nullable: true })
+  waiterIds!: string[] | null
+
   @Column({ type: 'numeric', precision: 12, scale: 2, transformer: numericTransformer })
   total!: number
 

@@ -13,6 +13,7 @@ export interface BillProps {
   tableId: string
   items: BillItemProps[]
   total: number
+  waiterIds: string[]
   createdAt: Date
 }
 
@@ -20,6 +21,7 @@ export class Bill extends Entity {
   readonly tableId: string
   readonly items: readonly BillItemProps[]
   readonly total: number
+  readonly waiterIds: readonly string[]
   readonly createdAt: Date
   paid: boolean
 
@@ -28,6 +30,7 @@ export class Bill extends Entity {
     this.tableId = props.tableId
     this.items = Object.freeze([...props.items])
     this.total = props.total
+    this.waiterIds = Object.freeze([...props.waiterIds])
     this.createdAt = props.createdAt
     this.paid = false
   }

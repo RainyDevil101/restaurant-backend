@@ -15,6 +15,7 @@ export interface PaymentWithItemsDto {
   change: number
   paidAt: Date
   items: BillItemProps[]
+  waiterIds: string[]
 }
 
 @QueryHandler(GetAllPaymentsQuery)
@@ -39,6 +40,7 @@ export class GetAllPaymentsHandler implements IQueryHandler<GetAllPaymentsQuery>
           change: p.change,
           paidAt: p.paidAt,
           items: bill ? [...bill.items] : [],
+          waiterIds: bill ? [...bill.waiterIds] : [],
         }
       }),
     )

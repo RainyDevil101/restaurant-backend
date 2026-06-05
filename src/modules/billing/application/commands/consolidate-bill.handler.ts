@@ -42,6 +42,9 @@ export class ConsolidateBillHandler implements ICommandHandler<ConsolidateBillCo
 
     const items = [...itemMap.values()]
     const total = items.reduce((sum, i) => sum + i.subtotal, 0)
-    return this.billRepo.save(Bill.create({ tableId, items, total, createdAt: new Date() }, randomUUID()))
+    const waiterIds = [...new Set(deliveredOrders.map((order) => order.createdBy))]
+    return this.billRepo.save(
+      Bill.create({ tableId, items, total, waiterIds, createdAt: new Date() }, randomUUID()),
+    )
   }
 }
