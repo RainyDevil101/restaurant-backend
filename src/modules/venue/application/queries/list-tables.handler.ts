@@ -9,7 +9,7 @@ import { ListTablesQuery } from './list-tables.query'
 export class ListTablesHandler implements IQueryHandler<ListTablesQuery> {
   constructor(@Inject(TABLE_REPOSITORY) private readonly repo: ITableRepository) {}
 
-  execute({ areaId }: ListTablesQuery): Promise<Table[]> {
-    return this.repo.findAll(areaId)
+  execute(_query: ListTablesQuery): Promise<Table[]> {
+    return this.repo.findAll()
   }
 }

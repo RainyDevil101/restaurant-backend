@@ -5,10 +5,7 @@ import { TABLE_STATUS } from '@src/modules/venue/domain/constants/table-status.c
 import { NotFoundError } from '@src/shared/domain/errors/not-found.error'
 
 const existingTable = () =>
-  Table.create(
-    { name: 'Mesa 1', capacity: 4, status: TABLE_STATUS.FREE, areaId: 'area-1' },
-    'table-1',
-  )
+  Table.create({ name: 'Mesa 1', capacity: 4, status: TABLE_STATUS.FREE }, 'table-1')
 
 const buildDeps = () => {
   const repo = {

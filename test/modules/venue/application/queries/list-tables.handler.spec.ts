@@ -16,32 +16,18 @@ const buildDeps = () => {
 }
 
 const sampleTables = () => [
-  Table.create(
-    { name: 'Mesa 1', capacity: 4, status: TABLE_STATUS.FREE, areaId: 'area-1' },
-    'table-1',
-  ),
+  Table.create({ name: 'Mesa 1', capacity: 4, status: TABLE_STATUS.FREE }, 'table-1'),
 ]
 
 describe('ListTablesHandler', () => {
-  it('returns all tables when no area filter is given', async () => {
+  it('returns all tables', async () => {
     const { handler, repo } = buildDeps()
     const tables = sampleTables()
     repo.findAll.mockResolvedValue(tables)
 
     const result = await handler.execute(new ListTablesQuery())
 
-    expect(repo.findAll).toHaveBeenCalledWith(undefined)
-    expect(result).toBe(tables)
-  })
-
-  it('forwards the area filter to the repository', async () => {
-    const { handler, repo } = buildDeps()
-    const tables = sampleTables()
-    repo.findAll.mockResolvedValue(tables)
-
-    const result = await handler.execute(new ListTablesQuery('area-1'))
-
-    expect(repo.findAll).toHaveBeenCalledWith('area-1')
+    expect(repo.findAll).toHaveBeenCalledWith()
     expect(result).toBe(tables)
   })
 })

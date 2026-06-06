@@ -6,8 +6,8 @@ export class CreateCategoryDto {
   name: string
 
   @IsString()
-  @IsOptional()
-  areaId?: string
+  @IsNotEmpty()
+  areaId: string
 }
 
 export class UpdateCategoryDto {

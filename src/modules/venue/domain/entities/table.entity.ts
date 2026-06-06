@@ -8,21 +8,18 @@ export interface TableProps {
   name: string
   capacity: number
   status: TableStatusValue
-  areaId: string
 }
 
 export class Table extends Entity {
   readonly name: string
   readonly capacity: number
   readonly status: TableStatus
-  readonly areaId: string
 
   private constructor(props: TableProps, id: string) {
     super(id)
     this.name = props.name
     this.capacity = props.capacity
     this.status = TableStatus.of(props.status)
-    this.areaId = props.areaId
   }
 
   static create(props: TableProps, id: string): Table {
@@ -37,7 +34,7 @@ export class Table extends Entity {
     return Table.create({ ...this.toProps(), status: nextStatus.value }, this.id)
   }
 
-  update(patch: Partial<Pick<TableProps, 'name' | 'capacity' | 'areaId'>>): Table {
+  update(patch: Partial<Pick<TableProps, 'name' | 'capacity'>>): Table {
     return Table.create({ ...this.toProps(), ...definedFields(patch) }, this.id)
   }
 
@@ -46,7 +43,6 @@ export class Table extends Entity {
       name: this.name,
       capacity: this.capacity,
       status: this.status.value,
-      areaId: this.areaId,
     }
   }
 }

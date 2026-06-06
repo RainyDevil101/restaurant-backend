@@ -14,7 +14,4 @@ export class TableOrmEntity {
 
   @Column({ type: 'varchar' })
   status!: TableStatusValue
-
-  @Column({ type: 'varchar' })
-  areaId!: string
 }

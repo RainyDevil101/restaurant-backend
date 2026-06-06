@@ -24,19 +24,19 @@ import { Order } from '../modules/orders/domain/entities/order.entity'
 import { ORDER_STATUS } from '../modules/orders/domain/constants/order-status.constants'
 
 const AREAS = [
-  { id: 'area-1', name: 'Terraza' },
-  { id: 'area-2', name: 'Interior' },
+  { id: 'area-1', name: 'Cocina' },
+  { id: 'area-2', name: 'Barra' },
 ]
 
 const TABLES = [
-  { id: 'table-1', name: 'Mesa 1', capacity: 2, status: TABLE_STATUS.FREE, areaId: 'area-1' },
-  { id: 'table-2', name: 'Mesa 2', capacity: 4, status: TABLE_STATUS.OCCUPIED, areaId: 'area-1' },
-  { id: 'table-3', name: 'Mesa 3', capacity: 8, status: TABLE_STATUS.PENDING_PAYMENT, areaId: 'area-1' },
-  { id: 'table-4', name: 'Mesa 4', capacity: 4, status: TABLE_STATUS.PENDING_PAYMENT, areaId: 'area-1' },
-  { id: 'table-5', name: 'Mesa 5', capacity: 2, status: TABLE_STATUS.OCCUPIED, areaId: 'area-2' },
-  { id: 'table-6', name: 'Mesa 6', capacity: 4, status: TABLE_STATUS.OCCUPIED, areaId: 'area-2' },
-  { id: 'table-7', name: 'Mesa 7', capacity: 2, status: TABLE_STATUS.FREE, areaId: 'area-2' },
-  { id: 'table-8', name: 'Mesa 8', capacity: 4, status: TABLE_STATUS.PENDING_PAYMENT, areaId: 'area-2' },
+  { id: 'table-1', name: 'Mesa 1', capacity: 2, status: TABLE_STATUS.FREE },
+  { id: 'table-2', name: 'Mesa 2', capacity: 4, status: TABLE_STATUS.OCCUPIED },
+  { id: 'table-3', name: 'Mesa 3', capacity: 8, status: TABLE_STATUS.PENDING_PAYMENT },
+  { id: 'table-4', name: 'Mesa 4', capacity: 4, status: TABLE_STATUS.PENDING_PAYMENT },
+  { id: 'table-5', name: 'Mesa 5', capacity: 2, status: TABLE_STATUS.OCCUPIED },
+  { id: 'table-6', name: 'Mesa 6', capacity: 4, status: TABLE_STATUS.OCCUPIED },
+  { id: 'table-7', name: 'Mesa 7', capacity: 2, status: TABLE_STATUS.FREE },
+  { id: 'table-8', name: 'Mesa 8', capacity: 4, status: TABLE_STATUS.PENDING_PAYMENT },
 ]
 
 const CATEGORIES = [
@@ -169,7 +169,7 @@ async function seed() {
   for (const a of AREAS) await areaRepo.save(Area.create({ name: a.name }, a.id))
   for (const t of TABLES) {
     await tableRepo.save(
-      Table.create({ name: t.name, capacity: t.capacity, status: t.status, areaId: t.areaId }, t.id),
+      Table.create({ name: t.name, capacity: t.capacity, status: t.status }, t.id),
     )
   }
   for (const c of CATEGORIES) await categoryRepo.save(Category.create({ name: c.name, areaId: c.areaId }, c.id))

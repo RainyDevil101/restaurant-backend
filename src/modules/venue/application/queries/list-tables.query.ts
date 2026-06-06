@@ -1,3 +1,1 @@
-export class ListTablesQuery {
-  constructor(readonly areaId?: string) {}
-}
+export class ListTablesQuery {}

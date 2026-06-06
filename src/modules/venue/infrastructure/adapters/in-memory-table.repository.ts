@@ -9,18 +9,17 @@ interface SeedTable {
   name: string
   capacity: number
   status: TableStatusValue
-  areaId: string
 }
 
 const SEED: SeedTable[] = [
-  { id: 'table-1', name: 'Mesa 1', capacity: 2, status: TABLE_STATUS.FREE,            areaId: 'area-1' },
-  { id: 'table-2', name: 'Mesa 2', capacity: 4, status: TABLE_STATUS.OCCUPIED,        areaId: 'area-1' },
-  { id: 'table-3', name: 'Mesa 3', capacity: 8, status: TABLE_STATUS.PENDING_PAYMENT, areaId: 'area-1' },
-  { id: 'table-4', name: 'Mesa 4', capacity: 4, status: TABLE_STATUS.PENDING_PAYMENT, areaId: 'area-1' },
-  { id: 'table-5', name: 'Mesa 5', capacity: 2, status: TABLE_STATUS.OCCUPIED,        areaId: 'area-2' },
-  { id: 'table-6', name: 'Mesa 6', capacity: 4, status: TABLE_STATUS.OCCUPIED,        areaId: 'area-2' },
-  { id: 'table-7', name: 'Mesa 7', capacity: 2, status: TABLE_STATUS.FREE,            areaId: 'area-2' },
-  { id: 'table-8', name: 'Mesa 8', capacity: 4, status: TABLE_STATUS.PENDING_PAYMENT, areaId: 'area-2' },
+  { id: 'table-1', name: 'Mesa 1', capacity: 2, status: TABLE_STATUS.FREE },
+  { id: 'table-2', name: 'Mesa 2', capacity: 4, status: TABLE_STATUS.OCCUPIED },
+  { id: 'table-3', name: 'Mesa 3', capacity: 8, status: TABLE_STATUS.PENDING_PAYMENT },
+  { id: 'table-4', name: 'Mesa 4', capacity: 4, status: TABLE_STATUS.PENDING_PAYMENT },
+  { id: 'table-5', name: 'Mesa 5', capacity: 2, status: TABLE_STATUS.OCCUPIED },
+  { id: 'table-6', name: 'Mesa 6', capacity: 4, status: TABLE_STATUS.OCCUPIED },
+  { id: 'table-7', name: 'Mesa 7', capacity: 2, status: TABLE_STATUS.FREE },
+  { id: 'table-8', name: 'Mesa 8', capacity: 4, status: TABLE_STATUS.PENDING_PAYMENT },
 ]
 
 @Injectable()
@@ -31,9 +30,8 @@ export class InMemoryTableRepository implements ITableRepository {
     this.store = new Map(SEED.map((t) => [t.id, Table.create(t, t.id)]))
   }
 
-  async findAll(areaId?: string): Promise<Table[]> {
-    const all = [...this.store.values()]
-    return areaId ? all.filter((t) => t.areaId === areaId) : all
+  async findAll(): Promise<Table[]> {
+    return [...this.store.values()]
   }
 
   async findById(id: string): Promise<Table | null> {

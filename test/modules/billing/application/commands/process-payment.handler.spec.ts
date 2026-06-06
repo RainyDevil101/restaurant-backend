@@ -28,7 +28,7 @@ const buildDeliveredOrder = (id: string): Order =>
   )
 
 const buildTable = (status: string): Table =>
-  Table.create({ name: 'Mesa 1', capacity: 4, status: status as never, areaId: 'area-1' }, 'table-1')
+  Table.create({ name: 'Mesa 1', capacity: 4, status: status as never }, 'table-1')
 
 describe('ProcessPaymentHandler', () => {
   let billRepo: jest.Mocked<IBillRepository>

@@ -6,7 +6,7 @@ import { NotFoundError } from '@src/shared/domain/errors/not-found.error'
 import { ValidationError } from '@src/shared/domain/errors/validation.error'
 
 const tableWithStatus = (status: (typeof TABLE_STATUS)[keyof typeof TABLE_STATUS]) =>
-  Table.create({ name: 'Mesa 1', capacity: 4, status, areaId: 'area-1' }, 'table-1')
+  Table.create({ name: 'Mesa 1', capacity: 4, status }, 'table-1')
 
 const buildDeps = () => {
   const repo = {

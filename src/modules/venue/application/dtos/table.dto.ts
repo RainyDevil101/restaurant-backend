@@ -10,10 +10,6 @@ export class CreateTableDto {
   @IsInt()
   @Min(1)
   capacity: number
-
-  @IsString()
-  @IsNotEmpty()
-  areaId: string
 }
 
 export class UpdateTableDto {
@@ -26,11 +22,6 @@ export class UpdateTableDto {
   @Min(1)
   @IsOptional()
   capacity?: number
-
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  areaId?: string
 }
 
 export class UpdateTableStatusDto {

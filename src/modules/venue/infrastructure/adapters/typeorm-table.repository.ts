@@ -13,10 +13,7 @@ export class TypeormTableRepository implements ITableRepository {
   ) {}
 
   private toDomain(row: TableOrmEntity): Table {
-    return Table.create(
-      { name: row.name, capacity: row.capacity, status: row.status, areaId: row.areaId },
-      row.id,
-    )
+    return Table.create({ name: row.name, capacity: row.capacity, status: row.status }, row.id)
   }
 
   private toOrm(table: Table): TableOrmEntity {
@@ -25,12 +22,11 @@ export class TypeormTableRepository implements ITableRepository {
     row.name = table.name
     row.capacity = table.capacity
     row.status = table.status.value
-    row.areaId = table.areaId
     return row
   }
 
-  async findAll(areaId?: string): Promise<Table[]> {
-    const rows = await this.repo.find(areaId ? { where: { areaId } } : undefined)
+  async findAll(): Promise<Table[]> {
+    const rows = await this.repo.find()
     return rows.map((row) => this.toDomain(row))
   }
 

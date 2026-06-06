@@ -8,7 +8,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common'
 import { CommandBus, QueryBus } from '@nestjs/cqrs'
@@ -32,8 +31,8 @@ export class TablesController {
   ) {}
 
   @Get()
-  findAll(@Query('areaId') areaId?: string) {
-    return this.queryBus.execute(new ListTablesQuery(areaId))
+  findAll() {
+    return this.queryBus.execute(new ListTablesQuery())
   }
 
   @Post()

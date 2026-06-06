@@ -20,10 +20,7 @@ describe('DeleteTableHandler', () => {
   it('deletes an existing table by id', async () => {
     const { handler, repo } = buildDeps()
     repo.findById.mockResolvedValue(
-      Table.create(
-        { name: 'Mesa 1', capacity: 4, status: TABLE_STATUS.FREE, areaId: 'area-1' },
-        'table-1',
-      ),
+      Table.create({ name: 'Mesa 1', capacity: 4, status: TABLE_STATUS.FREE }, 'table-1'),
     )
 
     await handler.execute(new DeleteTableCommand('table-1'))

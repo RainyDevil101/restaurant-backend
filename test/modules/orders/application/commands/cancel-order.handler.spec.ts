@@ -26,7 +26,7 @@ const buildOrder = (status = ORDER_STATUS.PENDING, paid = false) => {
 }
 
 const occupiedTable = () =>
-  Table.create({ name: 'Mesa 1', capacity: 4, status: TABLE_STATUS.OCCUPIED, areaId: 'area-1' }, 'table-1')
+  Table.create({ name: 'Mesa 1', capacity: 4, status: TABLE_STATUS.OCCUPIED }, 'table-1')
 
 const adminUser = (overrides: Partial<{ active: boolean; role: (typeof ROLE)[keyof typeof ROLE] }> = {}) =>
   User.create(
