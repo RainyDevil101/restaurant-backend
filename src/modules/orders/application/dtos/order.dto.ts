@@ -14,7 +14,7 @@ export class OrderItemInputDto {
 
   @IsInt()
   @Min(1)
-  quantity: number
+  quantity!: number
 
   @IsString()
   @IsOptional()
@@ -24,29 +24,29 @@ export class OrderItemInputDto {
 export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
-  tableId: string
+  tableId!: string
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => OrderItemInputDto)
-  items: OrderItemInputDto[]
+  items!: OrderItemInputDto[]
 }
 
 export class UpdateOrderStatusDto {
   @IsIn(Object.values(ORDER_STATUS))
-  status: OrderStatusValue
+  status!: OrderStatusValue
 }
 
 export class CancelOrderDto {
   @IsString()
   @IsNotEmpty()
-  reason: string
+  reason!: string
 
   @IsString()
   @IsNotEmpty()
-  adminEmail: string
+  adminEmail!: string
 
   @IsString()
   @IsNotEmpty()
-  adminCredential: string
+  adminCredential!: string
 }

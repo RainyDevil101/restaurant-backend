@@ -1,16 +1,15 @@
 import Joi from 'joi'
 import { BACKUP_DRIVER } from '../database/backup/backup-driver.constants'
-import { ENV_DEFAULTS } from '../shared/constants/env-defaults.constants'
 
 export const envValidationSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid('development', 'production', 'test')
-    .default('development'),
+    .required(),
 
-  PORT: Joi.number().integer().min(1).max(65535).default(3001),
+  PORT: Joi.number().integer().min(1).max(65535).required(),
 
   CORS_ORIGIN: Joi.string()
-    .default(ENV_DEFAULTS.CORS_ORIGIN)
+    .required()
     .custom((value, helpers) => {
       const origins = value
         .split(',')
@@ -30,7 +29,7 @@ export const envValidationSchema = Joi.object({
 
   JWT_EXPIRES_IN: Joi.string()
     .pattern(/^\d+[smhd]$/)
-    .default(ENV_DEFAULTS.JWT_EXPIRES_IN)
+    .required()
     .messages({
       'string.pattern.base': 'JWT_EXPIRES_IN must be a duration like 60s, 15m, 7d, or 1h',
     }),
@@ -39,19 +38,19 @@ export const envValidationSchema = Joi.object({
     'any.required': 'DATABASE_URL is required',
   }),
 
-  THROTTLE_TTL: Joi.number().integer().min(1000).default(ENV_DEFAULTS.THROTTLE_TTL),
+  THROTTLE_TTL: Joi.number().integer().min(1000).required(),
 
-  THROTTLE_LIMIT: Joi.number().integer().min(1).default(ENV_DEFAULTS.THROTTLE_LIMIT),
+  THROTTLE_LIMIT: Joi.number().integer().min(1).required(),
 
-  BACKUP_CRON: Joi.string().default(ENV_DEFAULTS.BACKUP_CRON),
+  BACKUP_CRON: Joi.string().required(),
 
-  BACKUP_TIMEZONE: Joi.string().default(ENV_DEFAULTS.BACKUP_TIMEZONE),
+  BACKUP_TIMEZONE: Joi.string().required(),
 
-  BACKUP_RETENTION_DAYS: Joi.number().integer().min(1).default(ENV_DEFAULTS.BACKUP_RETENTION_DAYS),
+  BACKUP_RETENTION_DAYS: Joi.number().integer().min(1).required(),
 
-  BACKUP_DIR: Joi.string().default(ENV_DEFAULTS.BACKUP_DIR),
+  BACKUP_DIR: Joi.string().required(),
 
-  BACKUP_DRIVER: Joi.string().valid(BACKUP_DRIVER.LOCAL, BACKUP_DRIVER.S3).default(ENV_DEFAULTS.BACKUP_DRIVER),
+  BACKUP_DRIVER: Joi.string().valid(BACKUP_DRIVER.LOCAL, BACKUP_DRIVER.S3).required(),
 
   S3_ENDPOINT: Joi.string().when('BACKUP_DRIVER', {
     is: BACKUP_DRIVER.S3,
@@ -83,5 +82,5 @@ export const envValidationSchema = Joi.object({
     otherwise: Joi.optional(),
   }),
 
-  S3_PREFIX: Joi.string().allow('').default(''),
+  S3_PREFIX: Joi.string().allow('').optional(),
 })

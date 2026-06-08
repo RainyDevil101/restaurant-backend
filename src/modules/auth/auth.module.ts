@@ -1,9 +1,9 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { ENV_DEFAULTS } from '../../shared/constants/env-defaults.constants'
 import { CqrsModule } from '@nestjs/cqrs'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
+import { ENVS } from '../../config/env.config'
 import { UsersModule } from '../users/users.module'
 import { LoginHandler } from './application/commands/login.handler'
 import { PASSWORD_SERVICE } from './domain/ports/password.service.port'
@@ -24,8 +24,8 @@ import { JwtStrategy } from './infrastructure/strategies/jwt.strategy'
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.getOrThrow<string>('JWT_SECRET'),
-        signOptions: { expiresIn: config.get('JWT_EXPIRES_IN') ?? ENV_DEFAULTS.JWT_EXPIRES_IN },
+        secret: config.getOrThrow<string>(ENVS.JWT_SECRET),
+        signOptions: { expiresIn: config.getOrThrow(ENVS.JWT_EXPIRES_IN) },
       }),
     }),
   ],

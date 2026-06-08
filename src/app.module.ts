@@ -3,8 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ENVS } from './config/env.config';
 import { envValidationSchema } from './config/env.validation';
-import { ENV_DEFAULTS } from './shared/constants/env-defaults.constants';
 import { BackupModule } from './database/backup/backup.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -30,8 +30,8 @@ import { AppLogger } from './shared/infrastructure/logging/app-logger.service';
       useFactory: (config: ConfigService) => ({
         throttlers: [
           {
-            ttl: config.get<number>('THROTTLE_TTL', ENV_DEFAULTS.THROTTLE_TTL),
-            limit: config.get<number>('THROTTLE_LIMIT', ENV_DEFAULTS.THROTTLE_LIMIT),
+            ttl: config.getOrThrow<number>(ENVS.THROTTLE_TTL),
+            limit: config.getOrThrow<number>(ENVS.THROTTLE_LIMIT),
           },
         ],
       }),

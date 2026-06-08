@@ -1,8 +1,8 @@
 import type { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface'
-import { ENV_DEFAULTS } from '../shared/constants/env-defaults.constants'
+import { ENVS } from './env.config'
 
 export function corsOrigins(): string[] {
-  const raw = process.env.CORS_ORIGIN ?? ENV_DEFAULTS.CORS_ORIGIN
+  const raw = process.env[ENVS.CORS_ORIGIN] ?? ''
   return raw
     .split(',')
     .map((origin) => origin.trim())

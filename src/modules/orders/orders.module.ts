@@ -10,6 +10,7 @@ import { CreateOrderHandler } from './application/commands/create-order.handler'
 import { UpdateOrderStatusHandler } from './application/commands/update-order-status.handler'
 import { GetOrdersByTableHandler } from './application/queries/get-orders-by-table.handler'
 import { GetComandasHandler } from './application/queries/get-comandas.handler'
+import { GetTableComandasHandler } from './application/queries/get-table-comandas.handler'
 import { ORDER_NOTIFIER } from './domain/ports/order-notifier.port'
 import { ORDER_REPOSITORY } from './domain/ports/order.repository.port'
 import { COMANDA_RENDERER } from './domain/ports/comanda-renderer.port'
@@ -28,6 +29,7 @@ import { OrdersGateway } from './infrastructure/realtime/orders.gateway'
     UpdateOrderStatusHandler,
     GetOrdersByTableHandler,
     GetComandasHandler,
+    GetTableComandasHandler,
     OrdersGateway,
     { provide: ORDER_REPOSITORY, useClass: TypeormOrderRepository },
     { provide: ORDER_NOTIFIER, useExisting: OrdersGateway },

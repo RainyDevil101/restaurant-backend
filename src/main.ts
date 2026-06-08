@@ -1,10 +1,12 @@
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { ENVS } from './config/env.config';
 import { buildCorsOptions } from './config/cors.config';
-import { ENV_DEFAULTS, HTTP_CONFIG } from './shared/constants/env-defaults.constants';
+import { HTTP_CONFIG } from './shared/constants/env-defaults.constants';
 import { AppLogger } from './shared/infrastructure/logging/app-logger.service';
 
 async function bootstrap() {
@@ -31,6 +33,7 @@ async function bootstrap() {
 
   app.enableCors(buildCorsOptions());
 
-  await app.listen(process.env.PORT ?? ENV_DEFAULTS.PORT);
+  const config = app.get(ConfigService);
+  await app.listen(config.getOrThrow<number>(ENVS.PORT));
 }
 bootstrap();

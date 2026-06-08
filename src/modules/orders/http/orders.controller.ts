@@ -11,6 +11,7 @@ import { CreateOrderCommand } from '../application/commands/create-order.command
 import { UpdateOrderStatusCommand } from '../application/commands/update-order-status.command'
 import { GetOrdersByTableQuery } from '../application/queries/get-orders-by-table.query'
 import { GetComandasQuery } from '../application/queries/get-comandas.query'
+import { GetTableComandasQuery } from '../application/queries/get-table-comandas.query'
 import { PAPER_WIDTH } from '../../settings/domain/constants/paper-width.constants'
 import { CancelOrderDto, CreateOrderDto, UpdateOrderStatusDto } from '../application/dtos/order.dto'
 
@@ -25,6 +26,13 @@ export class OrdersController {
   @Get()
   findAll(@Query('tableId') tableId?: string) {
     return this.queryBus.execute(new GetOrdersByTableQuery(tableId ?? ''))
+  }
+
+  @Get('table/:tableId/comandas')
+  @Roles(ROLE.CAJERO, ROLE.ADMIN)
+  tableComandas(@Param('tableId') tableId: string, @Query('width') width?: string) {
+    const paperWidth = width === '58' ? PAPER_WIDTH.MM_58 : PAPER_WIDTH.MM_80
+    return this.queryBus.execute(new GetTableComandasQuery(tableId, paperWidth))
   }
 
   @Get('table/:tableId')
