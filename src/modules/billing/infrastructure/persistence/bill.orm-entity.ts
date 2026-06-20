@@ -1,11 +1,16 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 import type { BillItemProps } from '../../domain/entities/bill.entity'
 import { numericTransformer } from '../../../../database/numeric.transformer'
+import { TableOrmEntity } from '../../../venue/infrastructure/persistence/table.orm-entity'
 
 @Entity('bills')
 export class BillOrmEntity {
   @PrimaryColumn({ type: 'varchar' })
   id!: string
+
+  @ManyToOne(() => TableOrmEntity, { nullable: false, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'tableId' })
+  table!: TableOrmEntity
 
   @Column({ type: 'varchar' })
   tableId!: string

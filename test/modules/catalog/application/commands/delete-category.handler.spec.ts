@@ -32,7 +32,7 @@ describe('DeleteCategoryHandler', () => {
   })
 
   it('deletes the category by id when it exists and has no products', async () => {
-    categories.findById.mockResolvedValue(Category.create({ name: 'Bebidas' }, 'cat-1'))
+    categories.findById.mockResolvedValue(Category.create({ name: 'Bebidas', areaId: 'area-1' }, 'cat-1'))
     products.findAll.mockResolvedValue([])
     categories.delete.mockResolvedValue(undefined)
 
@@ -52,7 +52,7 @@ describe('DeleteCategoryHandler', () => {
   })
 
   it('throws ValidationError and does not delete when the category still has products', async () => {
-    categories.findById.mockResolvedValue(Category.create({ name: 'Bebidas' }, 'cat-1'))
+    categories.findById.mockResolvedValue(Category.create({ name: 'Bebidas', areaId: 'area-1' }, 'cat-1'))
     products.findAll.mockResolvedValue([
       Product.create({ name: 'Coca', price: 10, categoryId: 'cat-1', available: true }, 'prod-1'),
     ])

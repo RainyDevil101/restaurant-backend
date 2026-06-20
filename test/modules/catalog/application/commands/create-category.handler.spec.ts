@@ -21,12 +21,15 @@ describe('CreateCategoryHandler', () => {
   it('saves a new category built from the dto name and returns it', async () => {
     repo.save.mockImplementation((category) => Promise.resolve(category))
 
-    const result = await handler.execute(new CreateCategoryCommand({ name: 'Bebidas' }))
+    const result = await handler.execute(
+      new CreateCategoryCommand({ name: 'Bebidas', areaId: 'area-1' }),
+    )
 
     expect(repo.save).toHaveBeenCalledTimes(1)
     const saved = repo.save.mock.calls[0][0]
     expect(saved).toBeInstanceOf(Category)
     expect(saved.name).toBe('Bebidas')
+    expect(saved.areaId).toBe('area-1')
     expect(saved.id).toEqual(expect.any(String))
     expect(result).toBe(saved)
   })

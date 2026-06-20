@@ -1,16 +1,15 @@
 import { Entity } from '../../../../shared/domain/entity.base'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
 import { CATEGORY_VALIDATION } from '../constants/catalog-validation-messages.constants'
-import { definedFields } from '../../../../shared/domain/patch'
 
 export interface CategoryProps {
   name: string
-  areaId?: string
+  areaId: string
 }
 
 export class Category extends Entity {
   readonly name: string
-  readonly areaId: string | undefined
+  readonly areaId: string
 
   private constructor(props: CategoryProps, id: string) {
     super(id)
@@ -20,6 +19,8 @@ export class Category extends Entity {
 
   static create(props: CategoryProps, id: string): Category {
     if (!props.name.trim()) throw new ValidationError('name', CATEGORY_VALIDATION.NAME_EMPTY)
+    if (!props.areaId || !props.areaId.trim())
+      throw new ValidationError('areaId', CATEGORY_VALIDATION.AREA_REQUIRED)
     return new Category({ name: props.name.trim(), areaId: props.areaId }, id)
   }
 
@@ -27,9 +28,12 @@ export class Category extends Entity {
     return Category.create({ ...this.toProps(), name }, this.id)
   }
 
-  update(patch: { name?: string; areaId: string | undefined }): Category {
+  update(patch: { name?: string; areaId?: string }): Category {
     return Category.create(
-      { ...this.toProps(), ...definedFields({ name: patch.name }), areaId: patch.areaId },
+      {
+        name: patch.name ?? this.name,
+        areaId: patch.areaId ?? this.areaId,
+      },
       this.id,
     )
   }

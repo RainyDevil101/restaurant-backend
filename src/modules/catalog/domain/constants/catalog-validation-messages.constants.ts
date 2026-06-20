@@ -1,5 +1,6 @@
 export const CATEGORY_VALIDATION = {
   NAME_EMPTY: 'El nombre de la categoría no puede estar vacío',
+  AREA_REQUIRED: 'La categoría debe tener un área asignada',
 } as const
 
 export const MENU_VALIDATION = {

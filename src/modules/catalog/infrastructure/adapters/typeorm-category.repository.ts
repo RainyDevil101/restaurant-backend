@@ -13,14 +13,14 @@ export class TypeormCategoryRepository implements ICategoryRepository {
   ) {}
 
   private toDomain(row: CategoryOrmEntity): Category {
-    return Category.create({ name: row.name, areaId: row.areaId ?? undefined }, row.id)
+    return Category.create({ name: row.name, areaId: row.areaId }, row.id)
   }
 
   private toOrm(category: Category): CategoryOrmEntity {
     const row = new CategoryOrmEntity()
     row.id = category.id
     row.name = category.name
-    row.areaId = category.areaId ?? null
+    row.areaId = category.areaId
     return row
   }
 

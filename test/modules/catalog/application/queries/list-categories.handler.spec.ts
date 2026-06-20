@@ -18,7 +18,7 @@ describe('ListCategoriesHandler', () => {
   })
 
   it('returns all categories from the repository', async () => {
-    const categories = [Category.create({ name: 'Bebidas' }, 'cat-1'), Category.create({ name: 'Postres' }, 'cat-2')]
+    const categories = [Category.create({ name: 'Bebidas', areaId: 'area-1' }, 'cat-1'), Category.create({ name: 'Postres', areaId: 'area-1' }, 'cat-2')]
     repo.findAll.mockResolvedValue(categories)
 
     const result = await handler.execute()

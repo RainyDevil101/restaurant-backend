@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm'
+import { AreaOrmEntity } from '../../../venue/infrastructure/persistence/area.orm-entity'
 
 @Entity('categories')
 export class CategoryOrmEntity {
@@ -8,8 +17,12 @@ export class CategoryOrmEntity {
   @Column({ type: 'varchar' })
   name!: string
 
-  @Column({ type: 'varchar', nullable: true })
-  areaId!: string | null
+  @ManyToOne(() => AreaOrmEntity, { nullable: false, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'areaId' })
+  area!: AreaOrmEntity
+
+  @Column({ type: 'varchar' })
+  areaId!: string
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date

@@ -1,5 +1,14 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 import { numericTransformer } from '../../../../database/numeric.transformer'
+import { CategoryOrmEntity } from './category.orm-entity'
 
 @Entity('products')
 export class ProductOrmEntity {
@@ -14,6 +23,10 @@ export class ProductOrmEntity {
 
   @Column({ type: 'numeric', precision: 10, scale: 2, transformer: numericTransformer })
   price!: number
+
+  @ManyToOne(() => CategoryOrmEntity, { nullable: false, onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'categoryId' })
+  category!: CategoryOrmEntity
 
   @Column({ type: 'varchar' })
   categoryId!: string

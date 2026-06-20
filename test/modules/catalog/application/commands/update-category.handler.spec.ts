@@ -20,7 +20,7 @@ describe('UpdateCategoryHandler', () => {
   })
 
   it('renames the category when a name is provided and persists the change', async () => {
-    repo.findById.mockResolvedValue(Category.create({ name: 'Bebidas' }, 'cat-1'))
+    repo.findById.mockResolvedValue(Category.create({ name: 'Bebidas', areaId: 'area-1' }, 'cat-1'))
     repo.update.mockImplementation((category) => Promise.resolve(category))
 
     const result = await handler.execute(new UpdateCategoryCommand('cat-1', { name: 'Postres' }))
@@ -34,7 +34,7 @@ describe('UpdateCategoryHandler', () => {
   })
 
   it('persists the existing category unchanged when no name is provided', async () => {
-    const existing = Category.create({ name: 'Bebidas' }, 'cat-1')
+    const existing = Category.create({ name: 'Bebidas', areaId: 'area-1' }, 'cat-1')
     repo.findById.mockResolvedValue(existing)
     repo.update.mockImplementation((category) => Promise.resolve(category))
 

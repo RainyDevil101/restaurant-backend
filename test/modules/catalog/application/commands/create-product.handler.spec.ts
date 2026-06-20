@@ -39,7 +39,7 @@ describe('CreateProductHandler', () => {
   })
 
   it('saves a new available product when the category exists', async () => {
-    categoryRepo.findById.mockResolvedValue(Category.create({ name: 'Comida' }, 'cat-1'))
+    categoryRepo.findById.mockResolvedValue(Category.create({ name: 'Comida', areaId: 'area-1' }, 'cat-1'))
     productRepo.save.mockImplementation((product) => Promise.resolve(product))
 
     const result = await handler.execute(new CreateProductCommand(dto))
