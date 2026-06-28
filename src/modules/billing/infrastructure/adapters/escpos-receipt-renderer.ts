@@ -2,16 +2,22 @@ import { Injectable } from '@nestjs/common'
 import type {
   IReceiptRenderer,
   ReceiptTicket,
-  RenderedReceipt,
 } from '../../domain/ports/receipt-renderer.port'
-
-const ESC = 0x1b
-const GS = 0x1d
-const LF = 0x0a
+import type { RenderedTicket } from '../../../../shared/domain/rendered-ticket'
+import {
+  ESC,
+  GS,
+  LF,
+  center,
+  dateLabel,
+  encode,
+  pad,
+} from '../../../../shared/infrastructure/printing/escpos'
+import { RECEIPT_LABELS } from '../../application/constants/billing-labels.constants'
 
 @Injectable()
 export class EscPosReceiptRenderer implements IReceiptRenderer {
-  render(ticket: ReceiptTicket): RenderedReceipt {
+  render(ticket: ReceiptTicket): RenderedTicket {
     return {
       preview: this.layout(ticket).join('\n'),
       escposBase64: this.toEscPos(ticket).toString('base64'),
@@ -21,66 +27,40 @@ export class EscPosReceiptRenderer implements IReceiptRenderer {
   private layout(ticket: ReceiptTicket): string[] {
     const w = ticket.columns
     const out: string[] = []
-    out.push(...this.center(ticket.businessName, w))
-    if (ticket.address.trim()) out.push(...this.center(ticket.address, w))
+    out.push(...center(ticket.businessName, w))
+    if (ticket.address.trim()) out.push(...center(ticket.address, w))
+    if (ticket.title) out.push(...center(ticket.title, w))
     out.push('-'.repeat(w))
-    out.push(this.pad(`Mesa: ${ticket.tableName}`, this.dateLabel(ticket.dateTime), w))
+    out.push(pad(`${RECEIPT_LABELS.TABLE_PREFIX} ${ticket.tableName}`, dateLabel(ticket.dateTime), w))
     out.push('-'.repeat(w))
     for (const line of ticket.lines) {
-      out.push(this.pad(this.itemLeft(line), this.money(line.subtotal), w))
+      out.push(pad(this.itemLeft(line), this.money(line.subtotal), w))
     }
     out.push('-'.repeat(w))
-    out.push(this.pad('TOTAL', this.money(ticket.total), w))
+    out.push(pad(RECEIPT_LABELS.TOTAL, this.money(ticket.total), w))
+    if (ticket.payment) {
+      out.push(pad(RECEIPT_LABELS.METHOD, ticket.payment.methodLabel, w))
+      out.push(pad(RECEIPT_LABELS.PAYMENT, this.money(ticket.payment.amountPaid), w))
+      if (ticket.payment.change !== undefined) {
+        out.push(pad(RECEIPT_LABELS.CHANGE, this.money(ticket.payment.change), w))
+      }
+    }
     out.push('')
-    if (ticket.footer.trim()) out.push(...this.center(ticket.footer, w))
+    if (ticket.footer.trim()) out.push(...center(ticket.footer, w))
     return out
   }
 
   private itemLeft(line: { quantity: number; name: string; isCombo: boolean }): string {
-    return `${line.quantity} x ${line.name}${line.isCombo ? ' (combo)' : ''}`
-  }
-
-  private pad(left: string, right: string, w: number): string {
-    const room = w - right.length - 1
-    const trimmed = left.length > room ? left.slice(0, Math.max(0, room)) : left
-    const gap = Math.max(1, w - trimmed.length - right.length)
-    return trimmed + ' '.repeat(gap) + right
-  }
-
-  private center(text: string, w: number): string[] {
-    return this.wrap(text, w).map((line) => {
-      const left = Math.max(0, Math.floor((w - line.length) / 2))
-      return ' '.repeat(left) + line
-    })
-  }
-
-  private wrap(text: string, w: number): string[] {
-    const lines: string[] = []
-    let current = ''
-    for (const word of text.split(/\s+/)) {
-      if (current && current.length + word.length + 1 > w) {
-        lines.push(current)
-        current = word
-      } else {
-        current = current ? `${current} ${word}` : word
-      }
-    }
-    if (current) lines.push(current)
-    return lines.length > 0 ? lines : ['']
+    return `${line.quantity} x ${line.name}${line.isCombo ? RECEIPT_LABELS.COMBO_SUFFIX : ''}`
   }
 
   private money(n: number): string {
     return `$${Math.round(n).toLocaleString('es-CL')}`
   }
 
-  private dateLabel(d: Date): string {
-    const p = (x: number) => String(x).padStart(2, '0')
-    return `${p(d.getDate())}/${p(d.getMonth() + 1)} ${p(d.getHours())}:${p(d.getMinutes())}`
-  }
-
   private toEscPos(ticket: ReceiptTicket): Buffer {
     const bytes: number[] = []
-    const write = (s: string) => this.encode(s).forEach((b) => bytes.push(b))
+    const write = (s: string) => encode(s).forEach((b) => bytes.push(b))
     const feed = () => bytes.push(LF)
     const w = ticket.columns
 
@@ -94,24 +74,40 @@ export class EscPosReceiptRenderer implements IReceiptRenderer {
       write(ticket.address)
       feed()
     }
+    if (ticket.title) {
+      bytes.push(ESC, 0x45, 0x01)
+      write(ticket.title)
+      feed()
+      bytes.push(ESC, 0x45, 0x00)
+    }
 
     bytes.push(ESC, 0x61, 0x00)
     write('-'.repeat(w))
     feed()
-    write(this.pad(`Mesa: ${ticket.tableName}`, this.dateLabel(ticket.dateTime), w))
+    write(pad(`${RECEIPT_LABELS.TABLE_PREFIX} ${ticket.tableName}`, dateLabel(ticket.dateTime), w))
     feed()
     write('-'.repeat(w))
     feed()
     for (const line of ticket.lines) {
-      write(this.pad(this.itemLeft(line), this.money(line.subtotal), w))
+      write(pad(this.itemLeft(line), this.money(line.subtotal), w))
       feed()
     }
     write('-'.repeat(w))
     feed()
     bytes.push(ESC, 0x45, 0x01)
-    write(this.pad('TOTAL', this.money(ticket.total), w))
+    write(pad(RECEIPT_LABELS.TOTAL, this.money(ticket.total), w))
     feed()
     bytes.push(ESC, 0x45, 0x00)
+    if (ticket.payment) {
+      write(pad(RECEIPT_LABELS.METHOD, ticket.payment.methodLabel, w))
+      feed()
+      write(pad(RECEIPT_LABELS.PAYMENT, this.money(ticket.payment.amountPaid), w))
+      feed()
+      if (ticket.payment.change !== undefined) {
+        write(pad(RECEIPT_LABELS.CHANGE, this.money(ticket.payment.change), w))
+        feed()
+      }
+    }
 
     feed()
     if (ticket.footer.trim()) {
@@ -122,18 +118,5 @@ export class EscPosReceiptRenderer implements IReceiptRenderer {
     bytes.push(LF, LF, LF, LF)
     bytes.push(GS, 0x56, 0x00)
     return Buffer.from(bytes)
-  }
-
-  private encode(text: string): number[] {
-    const ascii = text
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .replace(/[·•]/g, '-')
-    const out: number[] = []
-    for (let i = 0; i < ascii.length; i++) {
-      const code = ascii.charCodeAt(i)
-      out.push(code < 128 ? code : 0x3f)
-    }
-    return out
   }
 }

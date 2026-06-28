@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { QueryHandler, type IQueryHandler } from '@nestjs/cqrs'
-import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
+import { findOrThrow } from '../../../../shared/application/find-or-throw'
 import type { Bill } from '../../domain/entities/bill.entity'
 import { BILL_REPOSITORY, type IBillRepository } from '../../domain/ports/bill.repository.port'
-import { BILL_ENTITY_NAME } from '../constants/billing-error-messages.constants'
+import { ENTITY_NAME } from '../../../../shared/constants/entity-names.constants'
 import { GetBillByTableQuery } from './get-bill-by-table.query'
 
 @QueryHandler(GetBillByTableQuery)
@@ -12,8 +12,7 @@ export class GetBillByTableHandler implements IQueryHandler<GetBillByTableQuery>
   constructor(@Inject(BILL_REPOSITORY) private readonly repo: IBillRepository) {}
 
   async execute({ tableId }: GetBillByTableQuery): Promise<Bill> {
-    const bill = await this.repo.findByTable(tableId)
-    if (!bill) throw new NotFoundError(BILL_ENTITY_NAME, tableId)
+    const bill = findOrThrow(await this.repo.findByTable(tableId), ENTITY_NAME.BILL, tableId)
     return bill
   }
 }

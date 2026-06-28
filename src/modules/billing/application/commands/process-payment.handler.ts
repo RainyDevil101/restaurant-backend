@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs'
 import { randomUUID } from 'crypto'
-import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
+import { findOrThrow } from '../../../../shared/application/find-or-throw'
+import { ENTITY_NAME } from '../../../../shared/constants/entity-names.constants'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
 import { TABLE_STATUS } from '../../../venue/domain/constants/table-status.constants'
 import { TABLE_REPOSITORY, type ITableRepository } from '../../../venue/domain/ports/table.repository.port'
 import { ORDER_REPOSITORY, type IOrderRepository } from '../../../orders/domain/ports/order.repository.port'
 import { ORDER_STATUS } from '../../../orders/domain/constants/order-status.constants'
-import { BILL_ENTITY_NAME, BILL_ERROR } from '../constants/billing-error-messages.constants'
+import { BILL_ERROR } from '../constants/billing-error-messages.constants'
 import { PAYMENT_METHOD } from '../../domain/constants/payment-method.constants'
 import { Payment } from '../../domain/entities/payment.entity'
 import { BILL_REPOSITORY, type IBillRepository } from '../../domain/ports/bill.repository.port'
@@ -25,8 +26,7 @@ export class ProcessPaymentHandler implements ICommandHandler<ProcessPaymentComm
   ) {}
 
   async execute({ tableId, dto }: ProcessPaymentCommand): Promise<Payment> {
-    const bill = await this.billRepo.findByTable(tableId)
-    if (!bill) throw new NotFoundError(BILL_ENTITY_NAME, tableId)
+    const bill = findOrThrow(await this.billRepo.findByTable(tableId), ENTITY_NAME.BILL, tableId)
     if (bill.paid) throw new ValidationError('bill', BILL_ERROR.ALREADY_PAID)
     if (dto.amount < bill.total) {
       throw new ValidationError('amount', BILL_ERROR.AMOUNT_TOO_LOW(dto.amount, bill.total))

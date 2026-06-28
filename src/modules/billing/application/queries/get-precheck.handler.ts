@@ -12,16 +12,11 @@ import {
   RECEIPT_RENDERER,
   type IReceiptRenderer,
   type ReceiptLine,
-  type RenderedReceipt,
 } from '../../domain/ports/receipt-renderer.port'
-import { RECEIPT_DEFAULTS } from '../../../settings/application/constants/settings-messages.constants'
 import { PAPER_COLUMNS } from '../../../settings/domain/constants/paper-width.constants'
 import { BILL_ERROR } from '../constants/billing-error-messages.constants'
+import { type ReceiptDto, receiptHeader, toReceiptLine } from '../services/receipt-builder'
 import { GetPrecheckQuery } from './get-precheck.query'
-
-export interface PrecheckDto extends RenderedReceipt {
-  paperWidth: number
-}
 
 @QueryHandler(GetPrecheckQuery)
 @Injectable()
@@ -33,7 +28,7 @@ export class GetPrecheckHandler implements IQueryHandler<GetPrecheckQuery> {
     @Inject(RECEIPT_RENDERER) private readonly renderer: IReceiptRenderer,
   ) {}
 
-  async execute({ tableId, paperWidth }: GetPrecheckQuery): Promise<PrecheckDto> {
+  async execute({ tableId, paperWidth }: GetPrecheckQuery): Promise<ReceiptDto> {
     const orders = (await this.orderRepo.findAll({ tableId })).filter(
       (order) => order.status.value !== ORDER_STATUS.CANCELLED && !order.paid,
     )
@@ -49,12 +44,7 @@ export class GetPrecheckHandler implements IQueryHandler<GetPrecheckQuery> {
           entry.quantity += item.quantity
           entry.subtotal += item.subtotal
         } else {
-          itemMap.set(item.productId, {
-            quantity: item.quantity,
-            name: item.productName,
-            subtotal: item.subtotal,
-            isCombo: item.kind === 'combo',
-          })
+          itemMap.set(item.productId, toReceiptLine(item))
         }
       }
     }
@@ -62,13 +52,10 @@ export class GetPrecheckHandler implements IQueryHandler<GetPrecheckQuery> {
     const total = lines.reduce((sum, line) => sum + line.subtotal, 0)
 
     const table = await this.tableRepo.findById(tableId)
-    const settings = await this.receiptRepo.get()
     const columns = PAPER_COLUMNS[paperWidth]
 
     const rendered = this.renderer.render({
-      businessName: settings?.businessName ?? RECEIPT_DEFAULTS.BUSINESS_NAME,
-      address: settings?.address ?? RECEIPT_DEFAULTS.ADDRESS,
-      footer: settings?.footer ?? RECEIPT_DEFAULTS.FOOTER,
+      ...receiptHeader(await this.receiptRepo.get()),
       tableName: table?.name ?? tableId,
       dateTime: new Date(),
       lines,

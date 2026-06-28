@@ -5,6 +5,7 @@ import { InvalidCredentialsError } from '../../domain/errors/invalid-credentials
 import { PASSWORD_SERVICE, type IPasswordService } from '../../domain/ports/password.service.port'
 import { TOKEN_SERVICE, type ITokenService } from '../../domain/ports/token.service.port'
 import { AuthTokenDto } from '../dtos/auth-token.dto'
+import { toUserDto } from '../../../users/application/dtos/user.dto'
 import { LoginCommand } from './login.command'
 
 @CommandHandler(LoginCommand)
@@ -24,13 +25,6 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     if (!valid) throw new InvalidCredentialsError()
 
     const token = this.tokenService.sign({ sub: user.id, email: user.email, role: user.role })
-    return new AuthTokenDto(token, {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      active: user.active,
-      isOwner: user.isOwner,
-    })
+    return new AuthTokenDto(token, toUserDto(user))
   }
 }

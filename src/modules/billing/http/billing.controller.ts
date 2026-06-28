@@ -9,7 +9,9 @@ import { ProcessPaymentCommand } from '../application/commands/process-payment.c
 import { GetBillByTableQuery } from '../application/queries/get-bill-by-table.query'
 import { GetAllPaymentsQuery } from '../application/queries/get-all-payments.query'
 import { GetPrecheckQuery } from '../application/queries/get-precheck.query'
-import { PAPER_WIDTH } from '../../settings/domain/constants/paper-width.constants'
+import { GetPaymentReceiptQuery } from '../application/queries/get-payment-receipt.query'
+import { GetPaymentComandaQuery } from '../application/queries/get-payment-comanda.query'
+import { resolvePaperWidth } from '../../settings/domain/constants/paper-width.constants'
 import { ProcessPaymentDto } from '../application/dtos/payment.dto'
 
 @Controller('billing')
@@ -26,6 +28,18 @@ export class BillingController {
     return this.queryBus.execute(new GetAllPaymentsQuery())
   }
 
+  @Get('payments/:id/receipt')
+  @Roles(ROLE.ADMIN)
+  paymentReceipt(@Param('id') id: string, @Query('width') width?: string) {
+    return this.queryBus.execute(new GetPaymentReceiptQuery(id, resolvePaperWidth(width)))
+  }
+
+  @Get('payments/:id/comanda')
+  @Roles(ROLE.ADMIN)
+  paymentComanda(@Param('id') id: string, @Query('width') width?: string) {
+    return this.queryBus.execute(new GetPaymentComandaQuery(id, resolvePaperWidth(width)))
+  }
+
   @Get('table/:tableId')
   @Roles(ROLE.CAJERO, ROLE.ADMIN)
   getBill(@Param('tableId') tableId: string) {
@@ -35,8 +49,7 @@ export class BillingController {
   @Get('table/:tableId/precheck')
   @Roles(ROLE.CAJERO, ROLE.ADMIN)
   precheck(@Param('tableId') tableId: string, @Query('width') width?: string) {
-    const paperWidth = width === '58' ? PAPER_WIDTH.MM_58 : PAPER_WIDTH.MM_80
-    return this.queryBus.execute(new GetPrecheckQuery(tableId, paperWidth))
+    return this.queryBus.execute(new GetPrecheckQuery(tableId, resolvePaperWidth(width)))
   }
 
   @Post('table/:tableId/consolidate')

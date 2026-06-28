@@ -4,10 +4,11 @@ import { ValidationError } from '../../../../shared/domain/errors/validation.err
 import { OrderStatus, type OrderStatusValue } from '../value-objects/order-status.vo'
 import { ORDER_STATUS } from '../constants/order-status.constants'
 import { ORDER_VALIDATION } from '../constants/order-validation-messages.constants'
+import { ITEM_KIND, type ItemKind } from '../../../../shared/constants/item-kind.constants'
 
 export interface OrderItemProps {
   itemId: string
-  kind?: 'product' | 'combo'
+  kind?: ItemKind
   productId: string
   productName: string
   quantity: number
@@ -54,7 +55,7 @@ export class Order extends Entity {
     this.createdAt = props.createdAt
     this.status = OrderStatus.of(props.status)
     this.paid = props.paid
-    this.items = Object.freeze(props.items.map((item) => ({ ...item, kind: item.kind ?? 'product' })))
+    this.items = Object.freeze(props.items.map((item) => ({ ...item, kind: item.kind ?? ITEM_KIND.PRODUCT })))
     this.cancelledBy = props.cancelledBy
     this.cancellationReason = props.cancellationReason
     this.cancelledAt = props.cancelledAt
@@ -67,7 +68,7 @@ export class Order extends Entity {
     }
     const items: OrderItemProps[] = props.items.map((item) => ({
       ...item,
-      kind: item.kind ?? 'product',
+      kind: item.kind ?? ITEM_KIND.PRODUCT,
       itemId: randomUUID(),
       subtotal: item.quantity * item.unitPrice,
     }))

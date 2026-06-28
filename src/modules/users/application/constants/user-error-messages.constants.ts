@@ -1,5 +1,3 @@
-export const USER_ENTITY_NAME = 'Usuario'
-
 export const USER_ERROR = {
   EMAIL_EXISTS: 'Ya existe un usuario con este correo',
   CANNOT_DEACTIVATE_SELF: 'No puedes desactivar tu propia cuenta',

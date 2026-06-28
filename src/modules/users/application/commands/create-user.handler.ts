@@ -5,7 +5,7 @@ import { ValidationError } from '../../../../shared/domain/errors/validation.err
 import { PASSWORD_SERVICE, type IPasswordService } from '../../../auth/domain/ports/password.service.port'
 import { User } from '../../domain/entities/user.entity'
 import { USER_REPOSITORY, type IUserRepository } from '../../domain/ports/user.repository.port'
-import type { UserDto } from '../dtos/user.dto'
+import { toUserDto, type UserDto } from '../dtos/user.dto'
 import { USER_ERROR } from '../constants/user-error-messages.constants'
 import { CreateUserCommand } from './create-user.command'
 
@@ -30,13 +30,6 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       ),
     )
 
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      active: user.active,
-      isOwner: user.isOwner,
-    }
+    return toUserDto(user)
   }
 }

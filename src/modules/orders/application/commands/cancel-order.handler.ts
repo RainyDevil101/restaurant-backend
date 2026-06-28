@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs'
 import { ROLE } from '../../../../shared/constants/roles.constants'
-import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
+import { findOrThrow } from '../../../../shared/application/find-or-throw'
 import { ValidationError } from '../../../../shared/domain/errors/validation.error'
 import { InvalidCredentialsError } from '../../../auth/domain/errors/invalid-credentials.error'
 import { PASSWORD_SERVICE, type IPasswordService } from '../../../auth/domain/ports/password.service.port'
@@ -13,7 +13,7 @@ import { ORDER_STATUS } from '../../domain/constants/order-status.constants'
 import { ORDER_VALIDATION } from '../../domain/constants/order-validation-messages.constants'
 import { ORDER_NOTIFIER, type IOrderNotifier } from '../../domain/ports/order-notifier.port'
 import { ORDER_REPOSITORY, type IOrderRepository } from '../../domain/ports/order.repository.port'
-import { ORDER_ENTITY_NAME } from '../constants/order-error-messages.constants'
+import { ENTITY_NAME } from '../../../../shared/constants/entity-names.constants'
 import { CancelOrderCommand } from './cancel-order.command'
 
 @CommandHandler(CancelOrderCommand)
@@ -35,8 +35,7 @@ export class CancelOrderHandler implements ICommandHandler<CancelOrderCommand> {
     if (!validCredential) throw new InvalidCredentialsError()
     if (admin.role !== ROLE.ADMIN) throw new InvalidCredentialsError()
 
-    const order = await this.orderRepo.findById(orderId)
-    if (!order) throw new NotFoundError(ORDER_ENTITY_NAME, orderId)
+    const order = findOrThrow(await this.orderRepo.findById(orderId), ENTITY_NAME.ORDER, orderId)
     if (order.paid) throw new ValidationError('order', ORDER_VALIDATION.CANCEL_ALREADY_PAID)
     if (order.status.value === ORDER_STATUS.CANCELLED) {
       throw new ValidationError('order', ORDER_VALIDATION.CANCEL_ALREADY_CANCELLED)

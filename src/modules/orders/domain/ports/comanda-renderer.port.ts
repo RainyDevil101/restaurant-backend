@@ -1,3 +1,5 @@
+import type { RenderedTicket } from '../../../../shared/domain/rendered-ticket'
+
 export const COMANDA_RENDERER = Symbol('COMANDA_RENDERER')
 
 export interface ComandaLine {
@@ -14,11 +16,6 @@ export interface ComandaTicket {
   columns: number
 }
 
-export interface RenderedComanda {
-  preview: string
-  escposBase64: string
-}
-
 export interface IComandaRenderer {
-  render(ticket: ComandaTicket): RenderedComanda
+  render(ticket: ComandaTicket): RenderedTicket
 }

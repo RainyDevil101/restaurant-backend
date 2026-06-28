@@ -43,6 +43,11 @@ export class TypeormPaymentRepository implements IPaymentRepository {
     return payment
   }
 
+  async findById(id: string): Promise<Payment | null> {
+    const row = await this.repo.findOneBy({ id })
+    return row ? this.toDomain(row) : null
+  }
+
   async findByBill(billId: string): Promise<Payment | null> {
     const row = await this.repo.findOneBy({ billId })
     return row ? this.toDomain(row) : null

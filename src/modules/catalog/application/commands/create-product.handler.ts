@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs'
 import { randomUUID } from 'crypto'
-import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
+import { findOrThrow } from '../../../../shared/application/find-or-throw'
 import { Product } from '../../domain/entities/product.entity'
 import { CATEGORY_REPOSITORY, type ICategoryRepository } from '../../domain/ports/category.repository.port'
 import { PRODUCT_REPOSITORY, type IProductRepository } from '../../domain/ports/product.repository.port'
@@ -17,8 +17,7 @@ export class CreateProductHandler implements ICommandHandler<CreateProductComman
   ) {}
 
   async execute({ dto }: CreateProductCommand): Promise<Product> {
-    const category = await this.categoryRepo.findById(dto.categoryId)
-    if (!category) throw new NotFoundError(ENTITY_NAME.CATEGORY, dto.categoryId)
+    findOrThrow(await this.categoryRepo.findById(dto.categoryId), ENTITY_NAME.CATEGORY, dto.categoryId)
     return this.productRepo.save(Product.create({ ...dto, available: true }, randomUUID()))
   }
 }

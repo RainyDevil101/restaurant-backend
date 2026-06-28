@@ -9,3 +9,7 @@ export const PAPER_COLUMNS: Record<PaperWidthValue, number> = {
   [PAPER_WIDTH.MM_58]: 32,
   [PAPER_WIDTH.MM_80]: 48,
 }
+
+export function resolvePaperWidth(width?: string): PaperWidthValue {
+  return Number(width) === PAPER_WIDTH.MM_58 ? PAPER_WIDTH.MM_58 : PAPER_WIDTH.MM_80
+}

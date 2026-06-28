@@ -1,4 +1,4 @@
-import type { UserRole } from '../../domain/entities/user.entity'
+import type { User, UserRole } from '../../domain/entities/user.entity'
 
 export interface UserDto {
   id: string
@@ -7,4 +7,15 @@ export interface UserDto {
   role: UserRole
   active: boolean
   isOwner: boolean
+}
+
+export function toUserDto(user: User): UserDto {
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    active: user.active,
+    isOwner: user.isOwner,
+  }
 }

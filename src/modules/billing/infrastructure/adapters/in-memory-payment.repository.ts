@@ -13,6 +13,10 @@ export class InMemoryPaymentRepository implements IPaymentRepository {
     return payment
   }
 
+  async findById(id: string): Promise<Payment | null> {
+    return this.store.get(id) ?? null
+  }
+
   async findByBill(billId: string): Promise<Payment | null> {
     const paymentId = this.byBill.get(billId)
     return paymentId ? (this.store.get(paymentId) ?? null) : null

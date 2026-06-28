@@ -1,7 +1,8 @@
 import { Entity } from '../../../../shared/domain/entity.base'
+import type { ItemKind } from '../../../../shared/constants/item-kind.constants'
 
 export interface BillItemProps {
-  kind?: 'product' | 'combo'
+  kind?: ItemKind
   productId: string
   productName: string
   quantity: number

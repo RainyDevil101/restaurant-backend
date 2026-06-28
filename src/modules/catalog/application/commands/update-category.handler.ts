@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { CommandHandler, type ICommandHandler } from '@nestjs/cqrs'
-import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
+import { findOrThrow } from '../../../../shared/application/find-or-throw'
 import type { Category } from '../../domain/entities/category.entity'
 import { CATEGORY_REPOSITORY, type ICategoryRepository } from '../../domain/ports/category.repository.port'
 import { ENTITY_NAME } from '../../../../shared/constants/entity-names.constants'
@@ -12,8 +12,7 @@ export class UpdateCategoryHandler implements ICommandHandler<UpdateCategoryComm
   constructor(@Inject(CATEGORY_REPOSITORY) private readonly repo: ICategoryRepository) {}
 
   async execute({ id, dto }: UpdateCategoryCommand): Promise<Category> {
-    const category = await this.repo.findById(id)
-    if (!category) throw new NotFoundError(ENTITY_NAME.CATEGORY, id)
+    const category = findOrThrow(await this.repo.findById(id), ENTITY_NAME.CATEGORY, id)
     return this.repo.update(category.update({ name: dto.name, areaId: dto.areaId }))
   }
 }
