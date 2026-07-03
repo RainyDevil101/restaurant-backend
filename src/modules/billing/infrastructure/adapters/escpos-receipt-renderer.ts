@@ -8,6 +8,8 @@ import {
   ESC,
   GS,
   LF,
+  CHAR_SIZE,
+  charSize,
   center,
   dateLabel,
   encode,
@@ -66,6 +68,7 @@ export class EscPosReceiptRenderer implements IReceiptRenderer {
 
     bytes.push(ESC, 0x40)
     bytes.push(ESC, 0x61, 0x01)
+    bytes.push(...charSize(CHAR_SIZE.DOUBLE_HEIGHT))
     bytes.push(ESC, 0x45, 0x01)
     write(ticket.businessName)
     feed()
@@ -115,6 +118,7 @@ export class EscPosReceiptRenderer implements IReceiptRenderer {
       write(ticket.footer)
       feed()
     }
+    bytes.push(...charSize(CHAR_SIZE.NORMAL))
     bytes.push(LF, LF, LF, LF)
     bytes.push(GS, 0x56, 0x00)
     return Buffer.from(bytes)
