@@ -8,6 +8,8 @@ import {
   ESC,
   GS,
   LF,
+  CHAR_SIZE,
+  charSize,
   center,
   dateLabel,
   encode,
@@ -49,10 +51,10 @@ export class EscPosComandaRenderer implements IComandaRenderer {
 
     bytes.push(ESC, 0x40)
     bytes.push(ESC, 0x61, 0x01)
-    bytes.push(GS, 0x21, 0x11)
+    bytes.push(...charSize(CHAR_SIZE.DOUBLE_BOTH))
     write(COMANDA_TITLE)
     feed()
-    bytes.push(GS, 0x21, 0x00)
+    bytes.push(...charSize(CHAR_SIZE.DOUBLE_HEIGHT))
     bytes.push(ESC, 0x45, 0x01)
     write(ticket.areaName)
     feed()
@@ -77,6 +79,7 @@ export class EscPosComandaRenderer implements IComandaRenderer {
     }
     write('-'.repeat(w))
 
+    bytes.push(...charSize(CHAR_SIZE.NORMAL))
     bytes.push(LF, LF, LF, LF)
     bytes.push(GS, 0x56, 0x00)
     return Buffer.from(bytes)

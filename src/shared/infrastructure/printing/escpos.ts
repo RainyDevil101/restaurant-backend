@@ -2,6 +2,17 @@ export const ESC = 0x1b
 export const GS = 0x1d
 export const LF = 0x0a
 
+export const CHAR_SIZE = {
+  NORMAL: 0x00,
+  DOUBLE_HEIGHT: 0x01,
+  DOUBLE_WIDTH: 0x10,
+  DOUBLE_BOTH: 0x11,
+} as const
+
+export function charSize(magnification: number): number[] {
+  return [GS, 0x21, magnification]
+}
+
 export function pad(left: string, right: string, w: number): string {
   const room = w - right.length - 1
   const trimmed = left.length > room ? left.slice(0, Math.max(0, room)) : left
