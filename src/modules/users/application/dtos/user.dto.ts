@@ -7,6 +7,7 @@ export interface UserDto {
   role: UserRole
   active: boolean
   isOwner: boolean
+  lockedUntil: string | null
 }
 
 export function toUserDto(user: User): UserDto {
@@ -17,5 +18,6 @@ export function toUserDto(user: User): UserDto {
     role: user.role,
     active: user.active,
     isOwner: user.isOwner,
+    lockedUntil: user.lockedUntil ? user.lockedUntil.toISOString() : null,
   }
 }

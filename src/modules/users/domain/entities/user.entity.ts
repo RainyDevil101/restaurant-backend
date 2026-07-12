@@ -10,6 +10,8 @@ export interface UserProps {
   role: UserRole
   active: boolean
   isOwner: boolean
+  failedAttempts?: number
+  lockedUntil?: Date | null
 }
 
 export class User extends Entity {
@@ -19,6 +21,8 @@ export class User extends Entity {
   readonly role: UserRole
   readonly active: boolean
   readonly isOwner: boolean
+  readonly failedAttempts: number
+  readonly lockedUntil: Date | null
 
   /** Meseros (role M) authenticate with a numeric PIN; others use a password. */
   get isPin(): boolean {
@@ -33,10 +37,35 @@ export class User extends Entity {
     this.role = props.role
     this.active = props.active
     this.isOwner = props.isOwner
+    this.failedAttempts = props.failedAttempts ?? 0
+    this.lockedUntil = props.lockedUntil ?? null
   }
 
   static create(props: UserProps, id: string): User {
     return new User(props, id)
+  }
+
+  isLocked(now: Date): boolean {
+    return this.lockedUntil !== null && this.lockedUntil.getTime() > now.getTime()
+  }
+
+  registerFailedAttempt(now: Date, freeAttempts: number, backoffSeconds: readonly number[]): User {
+    const attempts = this.failedAttempts + 1
+    const penaltyIndex = attempts - freeAttempts - 1
+    let lockedUntil = this.lockedUntil
+    if (penaltyIndex >= 0 && backoffSeconds.length > 0) {
+      const seconds = backoffSeconds[Math.min(penaltyIndex, backoffSeconds.length - 1)]
+      lockedUntil = new Date(now.getTime() + seconds * 1000)
+    }
+    return User.create({ ...this.toProps(), failedAttempts: attempts, lockedUntil }, this.id)
+  }
+
+  registerSuccessfulLogin(): User {
+    return this.unlock()
+  }
+
+  unlock(): User {
+    return User.create({ ...this.toProps(), failedAttempts: 0, lockedUntil: null }, this.id)
   }
 
   deactivate(): User {
@@ -55,6 +84,8 @@ export class User extends Entity {
       role: this.role,
       active: this.active,
       isOwner: this.isOwner,
+      failedAttempts: this.failedAttempts,
+      lockedUntil: this.lockedUntil,
     }
   }
 }

@@ -9,6 +9,7 @@ import { ListUsersHandler } from './application/queries/list-users.handler'
 import { CreateUserHandler } from './application/commands/create-user.handler'
 import { UpdateUserHandler } from './application/commands/update-user.handler'
 import { DeactivateUserHandler } from './application/commands/deactivate-user.handler'
+import { UnlockUserHandler } from './application/commands/unlock-user.handler'
 import { UsersController } from './http/users.controller'
 
 @Module({
@@ -20,6 +21,7 @@ import { UsersController } from './http/users.controller'
     CreateUserHandler,
     UpdateUserHandler,
     DeactivateUserHandler,
+    UnlockUserHandler,
   ],
   exports: [USER_REPOSITORY],
 })
