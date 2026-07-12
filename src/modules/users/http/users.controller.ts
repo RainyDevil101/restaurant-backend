@@ -19,6 +19,7 @@ import type { TokenPayload } from '../../auth/domain/ports/token.service.port'
 import { ROLE } from '../../../shared/constants/roles.constants'
 import { CreateUserCommand } from '../application/commands/create-user.command'
 import { DeactivateUserCommand } from '../application/commands/deactivate-user.command'
+import { UnlockUserCommand } from '../application/commands/unlock-user.command'
 import { UpdateUserCommand } from '../application/commands/update-user.command'
 import { CreateUserDto } from '../application/dtos/create-user.dto'
 import { UpdateUserDto } from '../application/dtos/update-user.dto'
@@ -48,6 +49,12 @@ export class UsersController {
   @Roles(ROLE.ADMIN)
   update(@Param('id') id: string, @Body() dto: UpdateUserDto, @CurrentUser() actor: TokenPayload) {
     return this.commandBus.execute(new UpdateUserCommand(id, dto, actor.sub))
+  }
+
+  @Patch(':id/unlock')
+  @Roles(ROLE.ADMIN)
+  unlock(@Param('id') id: string) {
+    return this.commandBus.execute(new UnlockUserCommand(id))
   }
 
   @Delete(':id')

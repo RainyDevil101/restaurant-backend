@@ -14,7 +14,7 @@ describe('CreateUserHandler', () => {
 
   const dto = (overrides: Partial<CreateUserDto> = {}): CreateUserDto => ({
     name: 'Ana',
-    email: 'Ana@Subito.MX',
+    email: 'Ana@Subito.CL',
     role: ROLE.MESERO,
     credential: '1234',
     ...overrides,
@@ -48,10 +48,11 @@ describe('CreateUserHandler', () => {
     expect(result).toEqual({
       id: saved.id,
       name: 'Ana',
-      email: 'ana@subito.mx',
+      email: 'ana@subito.cl',
       role: ROLE.MESERO,
       active: true,
       isOwner: false,
+      lockedUntil: null,
     })
   })
 
@@ -60,11 +61,11 @@ describe('CreateUserHandler', () => {
     passwordService.hash.mockResolvedValue('hashed')
     repo.save.mockImplementation((user) => Promise.resolve(user))
 
-    await handler.execute(new CreateUserCommand(dto({ email: 'MixedCase@Subito.MX' })))
+    await handler.execute(new CreateUserCommand(dto({ email: 'MixedCase@Subito.CL' })))
 
-    expect(repo.findByEmail).toHaveBeenCalledWith('mixedcase@subito.mx')
+    expect(repo.findByEmail).toHaveBeenCalledWith('mixedcase@subito.cl')
     const saved = repo.save.mock.calls[0]![0] as User
-    expect(saved.email).toBe('mixedcase@subito.mx')
+    expect(saved.email).toBe('mixedcase@subito.cl')
   })
 
   it('creates the user as active', async () => {
@@ -80,7 +81,7 @@ describe('CreateUserHandler', () => {
   it('throws ValidationError when the email already exists', async () => {
     repo.findByEmail.mockResolvedValue(
       User.create(
-        { name: 'Existing', email: 'ana@subito.mx', hashedCredential: 'x', role: ROLE.MESERO, active: true, isOwner: false },
+        { name: 'Existing', email: 'ana@subito.cl', hashedCredential: 'x', role: ROLE.MESERO, active: true, isOwner: false },
         'user-1',
       ),
     )

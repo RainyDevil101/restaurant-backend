@@ -17,7 +17,7 @@ describe('UpdateUserHandler', () => {
     User.create(
       {
         name: 'Ana',
-        email: 'ana@subito.mx',
+        email: 'ana@subito.cl',
         hashedCredential: 'old-hash',
         role: ROLE.MESERO,
         active: true,
@@ -59,7 +59,7 @@ describe('UpdateUserHandler', () => {
 
     const updated = repo.update.mock.calls[0]![0] as User
     expect(updated.name).toBe('Ana Maria')
-    expect(updated.email).toBe('ana@subito.mx')
+    expect(updated.email).toBe('ana@subito.cl')
     expect(updated.role).toBe(ROLE.MESERO)
     expect(updated.active).toBe(true)
     expect(updated.hashedCredential).toBe('old-hash')
@@ -102,11 +102,11 @@ describe('UpdateUserHandler', () => {
     repo.findByEmail.mockResolvedValue(null)
     repo.update.mockImplementation((user) => Promise.resolve(user))
 
-    await dispatch({ email: 'NewMail@Subito.MX' })
+    await dispatch({ email: 'NewMail@Subito.CL' })
 
-    expect(repo.findByEmail).toHaveBeenCalledWith('newmail@subito.mx')
+    expect(repo.findByEmail).toHaveBeenCalledWith('newmail@subito.cl')
     const updated = repo.update.mock.calls[0]![0] as User
-    expect(updated.email).toBe('newmail@subito.mx')
+    expect(updated.email).toBe('newmail@subito.cl')
   })
 
   it('allows keeping the same email when the owner is the same user', async () => {
@@ -114,19 +114,19 @@ describe('UpdateUserHandler', () => {
     repo.findByEmail.mockResolvedValue(existingUser())
     repo.update.mockImplementation((user) => Promise.resolve(user))
 
-    await expect(dispatch({ email: 'ana@subito.mx' })).resolves.toMatchObject({ id: 'user-1' })
+    await expect(dispatch({ email: 'ana@subito.cl' })).resolves.toMatchObject({ id: 'user-1' })
   })
 
   it('throws ValidationError when the email belongs to another user', async () => {
     repo.findById.mockResolvedValue(existingUser())
     repo.findByEmail.mockResolvedValue(
       User.create(
-        { name: 'Other', email: 'taken@subito.mx', hashedCredential: 'x', role: ROLE.CAJERO, active: true, isOwner: false },
+        { name: 'Other', email: 'taken@subito.cl', hashedCredential: 'x', role: ROLE.CAJERO, active: true, isOwner: false },
         'user-2',
       ),
     )
 
-    await expect(dispatch({ email: 'taken@subito.mx' })).rejects.toThrow(ValidationError)
+    await expect(dispatch({ email: 'taken@subito.cl' })).rejects.toThrow(ValidationError)
     expect(repo.update).not.toHaveBeenCalled()
   })
 
@@ -139,10 +139,11 @@ describe('UpdateUserHandler', () => {
     expect(result).toEqual({
       id: 'user-1',
       name: 'Ana',
-      email: 'ana@subito.mx',
+      email: 'ana@subito.cl',
       role: ROLE.ADMIN,
       active: false,
       isOwner: false,
+      lockedUntil: null,
     })
   })
 })

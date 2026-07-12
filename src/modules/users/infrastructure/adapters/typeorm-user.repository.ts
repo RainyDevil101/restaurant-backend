@@ -21,6 +21,8 @@ export class TypeormUserRepository implements IUserRepository {
         role: row.role,
         active: row.active,
         isOwner: row.isOwner ?? false,
+        failedAttempts: row.failedAttempts ?? 0,
+        lockedUntil: row.lockedUntil ?? null,
       },
       row.id,
     )
@@ -35,6 +37,8 @@ export class TypeormUserRepository implements IUserRepository {
     row.role = user.role
     row.active = user.active
     row.isOwner = user.isOwner
+    row.failedAttempts = user.failedAttempts
+    row.lockedUntil = user.lockedUntil
     return row
   }
 

@@ -23,4 +23,10 @@ export class UserOrmEntity {
 
   @Column({ type: 'boolean', default: false })
   isOwner!: boolean
+
+  @Column({ type: 'int', default: 0 })
+  failedAttempts!: number
+
+  @Column({ type: 'timestamptz', nullable: true })
+  lockedUntil!: Date | null
 }

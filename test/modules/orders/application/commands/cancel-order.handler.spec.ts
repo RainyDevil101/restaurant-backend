@@ -32,7 +32,7 @@ const adminUser = (overrides: Partial<{ active: boolean; role: (typeof ROLE)[key
   User.create(
     {
       name: 'Admin',
-      email: 'admin@subito.mx',
+      email: 'admin@subito.cl',
       hashedCredential: 'stored-hash',
       role: overrides.role ?? ROLE.ADMIN,
       active: overrides.active ?? true,
@@ -50,7 +50,7 @@ describe('CancelOrderHandler', () => {
   let handler: CancelOrderHandler
 
   const command = (overrides: Partial<{ reason: string }> = {}) =>
-    new CancelOrderCommand('order-1', overrides.reason ?? 'Cliente se retiró', 'Admin@Subito.MX', 'admin')
+    new CancelOrderCommand('order-1', overrides.reason ?? 'Cliente se retiró', 'Admin@Subito.CL', 'admin')
 
   beforeEach(() => {
     orderRepo = {
@@ -81,7 +81,7 @@ describe('CancelOrderHandler', () => {
   it('cancels a pending order with valid admin credentials', async () => {
     const result = await handler.execute(command())
 
-    expect(userRepo.findByEmail).toHaveBeenCalledWith('admin@subito.mx')
+    expect(userRepo.findByEmail).toHaveBeenCalledWith('admin@subito.cl')
     expect(passwordService.compare).toHaveBeenCalledWith('admin', 'stored-hash')
     expect(result.status.value).toBe(ORDER_STATUS.CANCELLED)
     expect(result.cancelledBy).toBe('admin-1')

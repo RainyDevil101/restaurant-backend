@@ -16,10 +16,10 @@ interface SeedEntry {
 
 // Mirrors src/shared/mocks/users.ts from the frontend — dev only
 const SEED: SeedEntry[] = [
-  { id: 'user-1', name: 'Ana',     email: 'ana@subito.mx',    role: ROLE.MESERO, active: true,  isOwner: false, credential: '1234'  },
-  { id: 'user-2', name: 'Carlos',  email: 'carlos@subito.mx', role: ROLE.CAJERO, active: true,  isOwner: false, credential: '1234'  },
-  { id: 'user-3', name: 'Roberto', email: 'admin@subito.mx',  role: ROLE.ADMIN,  active: true,  isOwner: true,  credential: 'admin' },
-  { id: 'user-4', name: 'Pedro',   email: 'pedro@subito.mx',  role: ROLE.MESERO, active: false, isOwner: false, credential: '5678'  },
+  { id: 'user-1', name: 'Ana',     email: 'ana@subito.cl',    role: ROLE.MESERO, active: true,  isOwner: false, credential: '1234'  },
+  { id: 'user-2', name: 'Carlos',  email: 'carlos@subito.cl', role: ROLE.CAJERO, active: true,  isOwner: false, credential: '1234'  },
+  { id: 'user-3', name: 'Roberto', email: 'admin@subito.cl',  role: ROLE.ADMIN,  active: true,  isOwner: true,  credential: 'admin' },
+  { id: 'user-4', name: 'Pedro',   email: 'pedro@subito.cl',  role: ROLE.MESERO, active: false, isOwner: false, credential: '5678'  },
 ]
 
 @Injectable()
