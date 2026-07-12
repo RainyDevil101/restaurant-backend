@@ -36,6 +36,8 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
       role: dto.role ?? current.role,
       active: dto.active ?? current.active,
       isOwner: current.isOwner,
+      failedAttempts: current.failedAttempts,
+      lockedUntil: current.lockedUntil,
     }
 
     if (dto.email !== undefined) {

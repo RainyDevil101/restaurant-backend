@@ -11,7 +11,7 @@ describe('DeactivateUserHandler', () => {
 
   const activeUser = () =>
     User.create(
-      { name: 'Ana', email: 'ana@subito.mx', hashedCredential: 'hash', role: ROLE.MESERO, active: true, isOwner: false },
+      { name: 'Ana', email: 'ana@subito.cl', hashedCredential: 'hash', role: ROLE.MESERO, active: true, isOwner: false },
       'user-1',
     )
 
@@ -53,7 +53,7 @@ describe('DeactivateUserHandler', () => {
     expect(repo.update).toHaveBeenCalledTimes(1)
     const persisted = repo.update.mock.calls[0]![0] as User
     expect(persisted.name).toBe('Ana')
-    expect(persisted.email).toBe('ana@subito.mx')
+    expect(persisted.email).toBe('ana@subito.cl')
     expect(persisted.hashedCredential).toBe('hash')
   })
 })

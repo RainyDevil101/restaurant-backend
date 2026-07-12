@@ -28,11 +28,11 @@ describe('ListUsersHandler', () => {
   it('maps each user to a dto without the hashed credential', async () => {
     repo.findAll.mockResolvedValue([
       User.create(
-        { name: 'Ana', email: 'ana@subito.mx', hashedCredential: 'secret', role: ROLE.MESERO, active: true, isOwner: false },
+        { name: 'Ana', email: 'ana@subito.cl', hashedCredential: 'secret', role: ROLE.MESERO, active: true, isOwner: false },
         'user-1',
       ),
       User.create(
-        { name: 'Carlos', email: 'carlos@subito.mx', hashedCredential: 'secret2', role: ROLE.CAJERO, active: false, isOwner: false },
+        { name: 'Carlos', email: 'carlos@subito.cl', hashedCredential: 'secret2', role: ROLE.CAJERO, active: false, isOwner: false },
         'user-2',
       ),
     ])
@@ -40,8 +40,8 @@ describe('ListUsersHandler', () => {
     const result = await handler.execute(new ListUsersQuery())
 
     expect(result).toEqual([
-      { id: 'user-1', name: 'Ana', email: 'ana@subito.mx', role: ROLE.MESERO, active: true, isOwner: false },
-      { id: 'user-2', name: 'Carlos', email: 'carlos@subito.mx', role: ROLE.CAJERO, active: false, isOwner: false },
+      { id: 'user-1', name: 'Ana', email: 'ana@subito.cl', role: ROLE.MESERO, active: true, isOwner: false, lockedUntil: null },
+      { id: 'user-2', name: 'Carlos', email: 'carlos@subito.cl', role: ROLE.CAJERO, active: false, isOwner: false, lockedUntil: null },
     ])
     expect(result[0]).not.toHaveProperty('hashedCredential')
   })
