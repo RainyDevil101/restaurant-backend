@@ -111,7 +111,7 @@ export class Order extends Entity {
   }
 
   updateStatus(next: OrderStatusValue): Order {
-    this.status.transitionTo(OrderStatus.of(next)) // throws if invalid
+    this.status.transitionTo(OrderStatus.of(next))
     return Order.rehydrate(
       { ...this.toSeedProps(), status: next },
       this.id,

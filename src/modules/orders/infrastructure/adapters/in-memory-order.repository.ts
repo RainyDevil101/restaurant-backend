@@ -3,7 +3,6 @@ import { Order } from '../../domain/entities/order.entity'
 import type { IOrderRepository, OrderFilters } from '../../domain/ports/order.repository.port'
 import { ORDER_STATUS } from '../../domain/constants/order-status.constants'
 
-// Mirrors frontend mockOrders — prices snapshot at order time
 const SEED_ORDERS = [
   {
     id: 'order-1', tableId: 'table-2', status: ORDER_STATUS.IN_PROGRESS,
