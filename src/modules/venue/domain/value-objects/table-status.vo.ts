@@ -6,7 +6,6 @@ export type TableStatusValue = (typeof TABLE_STATUS)[keyof typeof TABLE_STATUS]
 
 const VALID: TableStatusValue[] = Object.values(TABLE_STATUS)
 
-// Allowed transitions — domain invariant for the table lifecycle
 const TRANSITIONS: Record<TableStatusValue, TableStatusValue[]> = {
   [TABLE_STATUS.FREE]:            [TABLE_STATUS.OCCUPIED],
   [TABLE_STATUS.OCCUPIED]:        [TABLE_STATUS.PENDING_PAYMENT, TABLE_STATUS.FREE],

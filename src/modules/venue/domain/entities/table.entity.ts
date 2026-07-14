@@ -30,7 +30,7 @@ export class Table extends Entity {
 
   updateStatus(next: TableStatusValue): Table {
     const nextStatus = TableStatus.of(next)
-    this.status.transitionTo(nextStatus) // throws ValidationError if invalid
+    this.status.transitionTo(nextStatus)
     return Table.create({ ...this.toProps(), status: nextStatus.value }, this.id)
   }
 
