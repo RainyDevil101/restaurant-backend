@@ -9,4 +9,5 @@ export const WS_EVENT = {
   JOINED_CHECKOUT: 'joinedCheckout',
   ORDER_CREATED: 'orderCreated',
   ORDER_STATUS_CHANGED: 'orderStatusChanged',
+  TABLE_STATUS_CHANGED: 'tableStatusChanged',
 } as const

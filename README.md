@@ -32,7 +32,6 @@ JWT_SECRET=<una-cadena-larga-y-aleatoria>
 BACKUP_DRIVER=local
 ```
 
-> Nunca pruebes contra la BD de producción. Para reproducir un problema, restaura un backup en la BD local.
 
 ### Cuentas de prueba (las crea `pnpm seed`)
 
