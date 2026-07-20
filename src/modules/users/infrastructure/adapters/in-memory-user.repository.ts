@@ -14,7 +14,6 @@ interface SeedEntry {
   credential: string
 }
 
-// Mirrors src/shared/mocks/users.ts from the frontend — dev only
 const SEED: SeedEntry[] = [
   { id: 'user-1', name: 'Ana',     email: 'ana@subito.cl',    role: ROLE.MESERO, active: true,  isOwner: false, credential: '1234'  },
   { id: 'user-2', name: 'Carlos',  email: 'carlos@subito.cl', role: ROLE.CAJERO, active: true,  isOwner: false, credential: '1234'  },

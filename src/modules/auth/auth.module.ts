@@ -38,6 +38,6 @@ import { JwtStrategy } from './infrastructure/strategies/jwt.strategy'
     { provide: PASSWORD_SERVICE, useClass: BcryptPasswordAdapter },
     { provide: TOKEN_SERVICE, useClass: JwtTokenAdapter },
   ],
-  exports: [JwtAuthGuard, RolesGuard, PASSWORD_SERVICE],
+  exports: [JwtAuthGuard, RolesGuard, PASSWORD_SERVICE, TOKEN_SERVICE],
 })
 export class AuthModule {}
