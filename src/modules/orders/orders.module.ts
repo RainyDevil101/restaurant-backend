@@ -35,6 +35,6 @@ import { OrdersGateway } from './infrastructure/realtime/orders.gateway'
     { provide: ORDER_NOTIFIER, useExisting: OrdersGateway },
     { provide: COMANDA_RENDERER, useClass: EscPosComandaRenderer },
   ],
-  exports: [ORDER_REPOSITORY, COMANDA_RENDERER],
+  exports: [ORDER_REPOSITORY, COMANDA_RENDERER, ORDER_NOTIFIER],
 })
 export class OrdersModule {}

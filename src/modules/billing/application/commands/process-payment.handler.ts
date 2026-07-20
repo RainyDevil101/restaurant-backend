@@ -14,6 +14,7 @@ import { Payment } from '../../domain/entities/payment.entity'
 import { BILL_REPOSITORY, type IBillRepository } from '../../domain/ports/bill.repository.port'
 import { PAYMENT_REPOSITORY, type IPaymentRepository } from '../../domain/ports/payment.repository.port'
 import { ProcessPaymentCommand } from './process-payment.command'
+import { type IOrderNotifier, ORDER_NOTIFIER } from '../../../orders/domain/ports/order-notifier.port'
 
 @CommandHandler(ProcessPaymentCommand)
 @Injectable()
@@ -23,6 +24,7 @@ export class ProcessPaymentHandler implements ICommandHandler<ProcessPaymentComm
     @Inject(PAYMENT_REPOSITORY) private readonly paymentRepo: IPaymentRepository,
     @Inject(TABLE_REPOSITORY)   private readonly tableRepo: ITableRepository,
     @Inject(ORDER_REPOSITORY)   private readonly orderRepo: IOrderRepository,
+    @Inject(ORDER_NOTIFIER)     private readonly notifier: IOrderNotifier,
   ) {}
 
   async execute({ tableId, dto }: ProcessPaymentCommand): Promise<Payment> {
@@ -45,6 +47,7 @@ export class ProcessPaymentHandler implements ICommandHandler<ProcessPaymentComm
     const table = await this.tableRepo.findById(tableId)
     if (table?.status.value === TABLE_STATUS.PENDING_PAYMENT) {
       await this.tableRepo.update(table.updateStatus(TABLE_STATUS.FREE))
+      this.notifier.notifyTableStatusChanged(tableId, TABLE_STATUS.FREE)
     }
 
     const unpaidOrders = await this.orderRepo.findAll({ tableId, status: ORDER_STATUS.DELIVERED, paid: false })
